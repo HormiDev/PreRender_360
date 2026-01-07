@@ -2,6 +2,7 @@ extends Node3D
 
 # ---------- CONFIGURACIÓN ----------
 @export var capture_directory := "./capture" # 📁 ruta de salida
+@export var default_model: PackedScene
 
 # ---------- ENUM FORMATO ----------
 enum ImageFormat {
@@ -22,6 +23,15 @@ const XPM_CHARS := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567
 @onready var format_option: OptionButton = $Control/ImageFormat
 @onready var capture_button: Button = $Control/Button
 @onready var scale_spin: SpinBox = $Control/ScaleSpin
+@onready var light_pitch_slider: HSlider = $Control/LightPitchSlider
+@onready var light_yaw_slider: HSlider = $Control/LightYawSlider
+@onready var directional_light: DirectionalLight3D = $SubViewport/DirectionalLight3D
+@onready var model_rot_x_slider: HSlider = $Control/ModelRotXSlider
+@onready var model_rot_z_slider: HSlider = $Control/ModelRotZSlider
+@onready var light_intensity_slider: HSlider = $Control/LightIntensitySlider
+@onready var import_button: Button = $Control/ImportButton
+@onready var file_dialog: FileDialog = $Control/FileDialog
+
 
 # ---------- RENDER ----------
 @onready var viewport: SubViewport = $SubViewport
@@ -33,10 +43,6 @@ const XPM_CHARS := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567
 @export var capture_count := 36
 
 var image_format: ImageFormat = ImageFormat.PNG
-
-@onready var import_button: Button = $Control/ImportButton
-@onready var file_dialog: FileDialog = $Control/FileDialog
-
 var current_model: Node = null
 
 
@@ -54,12 +60,32 @@ func _ready():
 	format_option.add_item("XPM", ImageFormat.XPM)
 	format_option.select(ImageFormat.PNG)
 	ensure_capture_folder()
-	
 	# Botón import
 	import_button.pressed.connect(_on_import_button_pressed)
 	file_dialog.file_selected.connect(_on_file_selected)
-	
+	# Rescalado
 	scale_spin.value_changed.connect(_on_scale_changed)
+	# Rotacion de la luz
+	light_pitch_slider.value_changed.connect(_on_light_rotation_changed)
+	light_yaw_slider.value_changed.connect(_on_light_rotation_changed)
+	# Rotacion del modelo
+	model_rot_x_slider.value_changed.connect(_on_model_rotation_changed)
+	model_rot_z_slider.value_changed.connect(_on_model_rotation_changed)
+	# Intensidad de la luz
+	light_intensity_slider.value_changed.connect(_on_light_intensity_changed)
+	
+	# Cargar modelo por defecto
+	if default_model != null:
+		var scene: Node3D = default_model.instantiate() as Node3D
+		# Limpiar RenderScene antes de agregar
+		for child in render_scene.get_children():
+			child.queue_free()
+		render_scene.add_child(scene)
+		scene.owner = render_scene
+		current_model = scene
+		# Normalizar y aplicar escala inicial
+		normalize_model_recursive(scene)
+		_apply_user_scale()
 
 
 # ---------- BOTÓN ----------
@@ -341,3 +367,23 @@ func normalize_model_recursive(node: Node) -> void:
 
 	for child in node.get_children():
 		normalize_model_recursive(child)
+
+func _on_light_rotation_changed(value: float) -> void:
+	# Leer valores de los sliders
+	var pitch: float = float(light_pitch_slider.value)  # rotación X
+	var yaw: float = float(light_yaw_slider.value)      # rotación Y
+
+	# Aplicar rotación a la luz en grados
+	directional_light.rotation_degrees = Vector3(pitch, yaw, 0)
+
+func _on_model_rotation_changed(value: float) -> void:
+	if current_model == null:
+		return
+	# Leer sliders
+	var rot_x = float(model_rot_x_slider.value)  # arriba-abajo
+	var rot_z = float(model_rot_z_slider.value)  # eje Z
+	# Aplicar rotación (Y se mantiene en 0)
+	current_model.rotation_degrees = Vector3(rot_x, 0, rot_z)
+
+func _on_light_intensity_changed(value: float) -> void:
+	directional_light.light_energy = value
