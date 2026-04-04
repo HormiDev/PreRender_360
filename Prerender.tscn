@@ -35,8 +35,8 @@ grow_vertical = 2
 [node name="Button" type="Button" parent="Control"]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.865625
-anchor_right = 0.865625
+anchor_left = 0.858333
+anchor_right = 0.858333
 offset_left = 27.0
 offset_top = 1011.0
 offset_right = 226.0
@@ -47,8 +47,8 @@ metadata/_edit_use_anchors_ = true
 [node name="RenderWidth_text" type="Label" parent="Control"]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.865625
-anchor_right = 0.865625
+anchor_left = 0.858333
+anchor_right = 0.858333
 offset_left = 27.0
 offset_top = 842.0
 offset_right = 137.0
@@ -59,8 +59,8 @@ metadata/_edit_use_anchors_ = true
 [node name="RenderWidth" type="SpinBox" parent="Control"]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.865625
-anchor_right = 0.865625
+anchor_left = 0.858333
+anchor_right = 0.858333
 offset_left = 147.0
 offset_top = 840.0
 offset_right = 233.563
@@ -72,8 +72,8 @@ metadata/_edit_use_anchors_ = true
 [node name="RenderHeigth_text" type="Label" parent="Control"]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.865625
-anchor_right = 0.865625
+anchor_left = 0.858333
+anchor_right = 0.858333
 offset_left = 27.0
 offset_top = 880.0
 offset_right = 138.0
@@ -84,8 +84,8 @@ metadata/_edit_use_anchors_ = true
 [node name="RenderHeigth" type="SpinBox" parent="Control"]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.865625
-anchor_right = 0.865625
+anchor_left = 0.858333
+anchor_right = 0.858333
 offset_left = 147.0
 offset_top = 878.0
 offset_right = 233.563
@@ -97,8 +97,8 @@ metadata/_edit_use_anchors_ = true
 [node name="NCaptures_text" type="Label" parent="Control"]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.865625
-anchor_right = 0.865625
+anchor_left = 0.858333
+anchor_right = 0.858333
 offset_left = 27.0
 offset_top = 921.0
 offset_right = 138.0
@@ -109,8 +109,8 @@ metadata/_edit_use_anchors_ = true
 [node name="NCaptures" type="SpinBox" parent="Control"]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.865625
-anchor_right = 0.865625
+anchor_left = 0.858333
+anchor_right = 0.858333
 offset_left = 147.0
 offset_top = 919.0
 offset_right = 233.563
@@ -122,8 +122,8 @@ metadata/_edit_use_anchors_ = true
 [node name="ImageFormat_text" type="Label" parent="Control"]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.865625
-anchor_right = 0.865625
+anchor_left = 0.858333
+anchor_right = 0.858333
 offset_left = 28.0
 offset_top = 964.0
 offset_right = 139.0
@@ -134,8 +134,8 @@ metadata/_edit_use_anchors_ = true
 [node name="ImageFormat" type="OptionButton" parent="Control"]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.865625
-anchor_right = 0.865625
+anchor_left = 0.858333
+anchor_right = 0.858333
 offset_left = 151.0
 offset_top = 964.0
 offset_right = 215.0
@@ -286,5 +286,58 @@ offset_right = 1886.0
 offset_bottom = 373.0
 max_value = 255.0
 value = 255.0
+
+[node name="FilePrefixInput" type="LineEdit" parent="Control"]
+layout_mode = 0
+offset_left = 1676.0
+offset_top = 792.0
+offset_right = 1874.0
+offset_bottom = 823.0
+placeholder_text = "Save Name"
+
+[node name="XPosition_text" type="Label" parent="Control"]
+offset_left = 27.0
+offset_top = 360.0
+offset_right = 138.0
+offset_bottom = 388.0
+text = "X Position"
+
+[node name="RenderPosXSpin" type="SpinBox" parent="Control"]
+offset_left = 147.0
+offset_top = 358.0
+offset_right = 233.563
+offset_bottom = 389.0
+min_value = -100.0
+step = 0.01
+
+[node name="YPosition_text" type="Label" parent="Control"]
+offset_left = 27.0
+offset_top = 400.0
+offset_right = 138.0
+offset_bottom = 428.0
+text = "Y Position"
+
+[node name="RenderPosYSpin" type="SpinBox" parent="Control"]
+offset_left = 147.0
+offset_top = 398.0
+offset_right = 233.563
+offset_bottom = 429.0
+min_value = -100.0
+step = 0.01
+
+[node name="ZPosition_text" type="Label" parent="Control"]
+offset_left = 27.0
+offset_top = 440.0
+offset_right = 138.0
+offset_bottom = 468.0
+text = "Z Position"
+
+[node name="RenderPosZSpin" type="SpinBox" parent="Control"]
+offset_left = 147.0
+offset_top = 438.0
+offset_right = 233.563
+offset_bottom = 469.0
+min_value = -100.0
+step = 0.01
 
 [connection signal="pressed" from="Control/Button" to="." method="_on_button_pressed"]

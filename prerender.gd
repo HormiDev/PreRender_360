@@ -9,7 +9,8 @@ enum ImageFormat {
 	PNG,
 	JPG,
 	WEBP,
-	XPM
+	XPM,
+	XPM_ARGB
 }
 
 # ---------- CONSTANTES XPM ----------
@@ -21,6 +22,7 @@ const XPM_CHARS := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567
 @onready var height_spin: SpinBox = $Control/RenderHeigth
 @onready var captures_spin: SpinBox = $Control/NCaptures
 @onready var format_option: OptionButton = $Control/ImageFormat
+@onready var file_prefix_input: LineEdit = $Control/FilePrefixInput
 @onready var capture_button: Button = $Control/Button
 @onready var scale_spin: SpinBox = $Control/ScaleSpin
 @onready var light_pitch_slider: HSlider = $Control/LightPitchSlider
@@ -34,6 +36,9 @@ const XPM_CHARS := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567
 @onready var light_r_slider: HSlider = $Control/LightRSlider
 @onready var light_g_slider: HSlider = $Control/LightGSlider
 @onready var light_b_slider: HSlider = $Control/LightBSlider
+@onready var render_pos_x_spin: SpinBox = $Control.get_node_or_null("RenderPosXSpin")
+@onready var render_pos_y_spin: SpinBox = $Control.get_node_or_null("RenderPosYSpin")
+@onready var render_pos_z_spin: SpinBox = $Control.get_node_or_null("RenderPosZSpin")
 
 
 # ---------- RENDER ----------
@@ -47,6 +52,7 @@ const XPM_CHARS := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567
 
 var image_format: ImageFormat = ImageFormat.PNG
 var current_model: Node = null
+var file_prefix := "capture_angle_"
 
 
 # ---------- READY ----------
@@ -61,6 +67,7 @@ func _ready():
 	format_option.add_item("JPG", ImageFormat.JPG)
 	format_option.add_item("WEBP", ImageFormat.WEBP)
 	format_option.add_item("XPM", ImageFormat.XPM)
+	format_option.add_item("XPM_ARGB", ImageFormat.XPM_ARGB)
 	format_option.select(ImageFormat.PNG)
 	ensure_capture_folder()
 	# Botón import
@@ -74,6 +81,15 @@ func _ready():
 	# Rotacion del modelo
 	model_rot_x_slider.value_changed.connect(_on_model_rotation_changed)
 	model_rot_z_slider.value_changed.connect(_on_model_rotation_changed)
+	
+	# Posición del RenderScene
+	if render_pos_x_spin:
+		render_pos_x_spin.value_changed.connect(_on_render_position_changed)
+	if render_pos_y_spin:
+		render_pos_y_spin.value_changed.connect(_on_render_position_changed)
+	if render_pos_z_spin:
+		render_pos_z_spin.value_changed.connect(_on_render_position_changed)
+
 	# Intensidad de la luz
 	light_intensity_slider.value_changed.connect(_on_light_intensity_changed)
 	
@@ -107,6 +123,11 @@ func _on_button_pressed():
 	render_height = int(height_spin.value)
 	capture_count = int(captures_spin.value)
 	image_format = format_option.get_selected_id()
+	
+	if file_prefix_input and file_prefix_input.text.strip_edges() != "":
+		file_prefix = file_prefix_input.text.strip_edges()
+	else:
+		file_prefix = "capture_angle_"
 
 	viewport.size = Vector2i(render_width, render_height)
 
@@ -159,7 +180,7 @@ func capture_360():
 		if image_format == ImageFormat.JPG:
 			image.convert(Image.FORMAT_RGB8)
 
-		var base_path := "%s/capture_angle_%03d" % [capture_directory, int(angle)]
+		var base_path := "%s/%s%03d" % [capture_directory, file_prefix, int(angle)]
 		save_image(image, base_path)
 
 	print("Captura 360° completada")
@@ -176,6 +197,8 @@ func save_image(image: Image, base_path: String):
 			image.save_webp(base_path + ".webp")
 		ImageFormat.XPM:
 			save_xpm_rgba(image, base_path + ".xpm")
+		ImageFormat.XPM_ARGB:
+			save_xpm_argb(image, base_path + ".xpm")
 
 
 func xpm_code(index: int, chars_per_pixel: int) -> String:
@@ -301,6 +324,66 @@ func save_xpm_rgba(image: Image, path: String):
 	file.close()
 
 
+func save_xpm_argb(image: Image, path: String):
+	image.convert(Image.FORMAT_RGBA8)
+	var w := image.get_width()
+	var h := image.get_height()
+	var palette := {}          # key -> index
+	var palette_list := []     # index -> key
+	var pixels := []
+
+	for y in range(h):
+		var row := []
+		for x in range(w):
+			var c := image.get_pixel(x, y)
+
+			var key: String
+			if c.a <= 0.0:
+				key = "None"
+			else:
+				key = "%02X%02X%02X%02X" % [
+					int(c.a * 255),
+					int(c.r * 255),
+					int(c.g * 255),
+					int(c.b * 255)
+				]
+			if not palette.has(key):
+				palette[key] = palette.size()
+				palette_list.append(key)
+			row.append(key)
+		pixels.append(row)
+		
+	var base := XPM_CHARS.length()
+	var color_count := palette.size()
+	var chars_per_pixel := 1
+	
+	while pow(base, chars_per_pixel) < color_count:
+		chars_per_pixel += 1
+	var file := FileAccess.open(path, FileAccess.WRITE)
+	if file == null:
+		push_error("No se pudo escribir XPM")
+		return
+	file.store_line("/* XPM */")
+	file.store_line("static char * image_xpm[] = {")
+	file.store_line("\"%d %d %d %d\"," % [w, h, color_count, chars_per_pixel])
+	# Paleta
+	for key in palette_list:
+		var code := xpm_code(palette[key], chars_per_pixel)
+		if key == "None":
+			file.store_line("\"%s c #00000000\"," % code)
+		else:
+			file.store_line("\"%s c #%s\"," % [code, key])
+	# Píxeles
+	for y in range(h):
+		var line := ""
+		for x in range(w):
+			var idx: int = palette[pixels[y][x]]
+			line += xpm_code(idx, chars_per_pixel)
+		file.store_line("\"%s\"," % line)
+	file.store_line("};")
+	file.close()
+
+
 func _on_import_button_pressed() -> void:
 	file_dialog.popup()
 
@@ -395,6 +478,14 @@ func _on_model_rotation_changed(value: float) -> void:
 	var rot_z = float(model_rot_z_slider.value)  # eje Z
 	# Aplicar rotación (Y se mantiene en 0)
 	current_model.rotation_degrees = Vector3(rot_x, 0, rot_z)
+
+func _on_render_position_changed(_value: float) -> void:
+	if render_scene == null:
+		return
+	var pos_x = float(render_pos_x_spin.value) if render_pos_x_spin else render_scene.position.x
+	var pos_y = float(render_pos_y_spin.value) if render_pos_y_spin else render_scene.position.y
+	var pos_z = float(render_pos_z_spin.value) if render_pos_z_spin else render_scene.position.z
+	render_scene.position = Vector3(pos_x, pos_y, pos_z)
 
 func _on_light_intensity_changed(value: float) -> void:
 	directional_light.light_energy = value
