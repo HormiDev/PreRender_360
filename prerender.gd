@@ -39,6 +39,7 @@ const XPM_CHARS := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567
 @onready var render_pos_x_spin: SpinBox = $Control.get_node_or_null("RenderPosXSpin")
 @onready var render_pos_y_spin: SpinBox = $Control.get_node_or_null("RenderPosYSpin")
 @onready var render_pos_z_spin: SpinBox = $Control.get_node_or_null("RenderPosZSpin")
+@onready var n_frames_spin: SpinBox = $Control.get_node_or_null("NFrames")
 
 
 # ---------- RENDER ----------
@@ -49,6 +50,7 @@ const XPM_CHARS := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567
 @export var render_width := 512
 @export var render_height := 512
 @export var capture_count := 36
+@export var anim_fps := 30
 
 var image_format: ImageFormat = ImageFormat.PNG
 var current_model: Node = null
@@ -105,6 +107,7 @@ func _ready():
 		# Normalizar y aplicar escala inicial
 		normalize_model_recursive(scene)
 		_apply_user_scale()
+		_update_nframes_ui()
 	
 		# Color RGB de la luz
 	light_r_slider.value_changed.connect(_on_light_color_changed)
@@ -159,31 +162,92 @@ func clear_capture_folder():
 		file = dir.get_next()
 	dir.list_dir_end()
 
+# ---------- FUNCIONES ANIMACION ----------
+func _update_nframes_ui() -> void:
+	if not n_frames_spin:
+		return
+	
+	var anim_player := _find_animation_player(current_model) if current_model else null
+	var has_anim := anim_player != null and anim_player.get_animation_list().size() > 0
+	
+	if has_anim:
+		n_frames_spin.max_value = 1000 # Sin límite si hay animación
+		n_frames_spin.value = 30
+	else:
+		n_frames_spin.max_value = 1 # Máximo 1 si no hay animación
+		n_frames_spin.value = 1
+
+func _find_animation_player(node: Node) -> AnimationPlayer:
+	if node is AnimationPlayer:
+		return node
+	for child in node.get_children():
+		var result := _find_animation_player(child)
+		if result != null:
+			return result
+	return null
+
 # ---------- CAPTURA ----------
-func capture_360():
+func capture_360() -> void:
 	ensure_capture_folder()
 	clear_capture_folder()
 
 	render_scene.rotation = Vector3.ZERO
 	var step_degrees := 360.0 / capture_count
 
-	for i in range(capture_count):
-		var angle := step_degrees * i
+	var anim_player := _find_animation_player(current_model) if current_model else null
+	var has_anim := anim_player != null and anim_player.get_animation_list().size() > 0
 
-		render_scene.rotation_degrees.y = angle
+	if has_anim:
+		var anim_name: String = anim_player.get_animation_list()[0]
+		var anim := anim_player.get_animation(anim_name)
+		var total_frames := int(n_frames_spin.value) if n_frames_spin else 30
+		if total_frames <= 0:
+			total_frames = 1
 
-		await get_tree().process_frame
-		await get_tree().process_frame
+		anim_player.play(anim_name)
+		anim_player.speed_scale = 0.0 # Pausar la reproducción automática
+		
+		for f in range(total_frames):
+			var time_sec := 0.0
+			if total_frames > 1:
+				time_sec = (float(f) / float(total_frames)) * anim.length
+				
+			anim_player.seek(time_sec, true)
+			# anim_player.advance(0) # Ya no es estrictamente necesario si seek actualiza y procesamos frames
 
-		var image: Image = viewport.get_texture().get_image()
+			for i in range(capture_count):
+				var angle := step_degrees * i
+				render_scene.rotation_degrees.y = angle
 
-		if image_format == ImageFormat.JPG:
-			image.convert(Image.FORMAT_RGB8)
+				# Actualizar vista (ahora la animación no avanzará sola porque speed_scale es 0.0)
+				await get_tree().process_frame
+				await get_tree().process_frame
 
-		var base_path := "%s/%s%03d" % [capture_directory, file_prefix, int(angle)]
-		save_image(image, base_path)
+				var image: Image = viewport.get_texture().get_image()
 
-	print("Captura 360° completada")
+				if image_format == ImageFormat.JPG:
+					image.convert(Image.FORMAT_RGB8)
+
+				var base_path := "%s/%sf%03d_%03d" % [capture_directory, file_prefix, f, int(angle)]
+				save_image(image, base_path)
+	else:
+		for i in range(capture_count):
+			var angle := step_degrees * i
+
+			render_scene.rotation_degrees.y = angle
+
+			await get_tree().process_frame
+			await get_tree().process_frame
+
+			var image: Image = viewport.get_texture().get_image()
+
+			if image_format == ImageFormat.JPG:
+				image.convert(Image.FORMAT_RGB8)
+
+			var base_path := "%s/%s%03d" % [capture_directory, file_prefix, int(angle)]
+			save_image(image, base_path)
+
+	print("Captura 360° completada.")
 	print("Guardado en:", ProjectSettings.globalize_path(capture_directory))
 
 # ---------- GUARDAR ----------
@@ -281,11 +345,10 @@ func save_xpm_rgba(image: Image, path: String):
 			if c.a <= 0.0:
 				key = "None"
 			else:
-				key = "%02X%02X%02X%02X" % [
+				key = "%02X%02X%02X" % [
 					int(c.r * 255),
 					int(c.g * 255),
-					int(c.b * 255),
-					int(c.a * 255)
+					int(c.b * 255)
 				]
 			if not palette.has(key):
 				palette[key] = palette.size()
@@ -433,6 +496,7 @@ func _add_to_render_scene(scene: Node) -> void:
 
 	# Aplicar la escala inicial del usuario
 	_apply_user_scale()
+	_update_nframes_ui()
 
 func _apply_user_scale() -> void:
 	if current_model == null:
