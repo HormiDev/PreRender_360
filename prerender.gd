@@ -52,9 +52,13 @@ const XPM_CHARS := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567
 @export var capture_count := 36
 @export var anim_fps := 30
 
-var image_format: ImageFormat = ImageFormat.PNG
+var image_format: int = ImageFormat.PNG
 var current_model: Node = null
 var file_prefix := "capture_angle_"
+
+# Buffers temporales para export web
+var _web_capture_buffers := []
+var _web_import_callback_ref: JavaScriptObject
 
 
 # ---------- READY ----------
@@ -62,15 +66,17 @@ func _ready():
 	if capture_button.pressed.is_connected(_on_button_pressed):
 		capture_button.pressed.disconnect(_on_button_pressed)
 	capture_button.pressed.connect(_on_button_pressed)
+	if OS.has_feature("web"):
+		_web_import_callback_ref = JavaScriptBridge.create_callback(_on_web_model_file_picked)
 
 	# Configurar OptionButton
 	format_option.clear()
-	format_option.add_item("PNG", ImageFormat.PNG)
-	format_option.add_item("JPG", ImageFormat.JPG)
-	format_option.add_item("WEBP", ImageFormat.WEBP)
-	format_option.add_item("XPM", ImageFormat.XPM)
-	format_option.add_item("XPM_ARGB", ImageFormat.XPM_ARGB)
-	format_option.select(ImageFormat.PNG)
+	format_option.add_item("PNG", int(ImageFormat.PNG))
+	format_option.add_item("JPG", int(ImageFormat.JPG))
+	format_option.add_item("WEBP", int(ImageFormat.WEBP))
+	format_option.add_item("XPM", int(ImageFormat.XPM))
+	format_option.add_item("XPM_ARGB", int(ImageFormat.XPM_ARGB))
+	format_option.select(int(ImageFormat.PNG))
 	ensure_capture_folder()
 	# Botón import
 	import_button.pressed.connect(_on_import_button_pressed)
@@ -138,6 +144,9 @@ func _on_button_pressed():
 
 # ---------- CARPETA ----------
 func ensure_capture_folder():
+	if OS.has_feature("web"):
+		return
+
 	var base_dir := capture_directory.get_base_dir()
 	var folder_name := capture_directory.get_file()
 
@@ -150,6 +159,9 @@ func ensure_capture_folder():
 		dir.make_dir(folder_name)
 
 func clear_capture_folder():
+	if OS.has_feature("web"):
+		return
+
 	var dir = DirAccess.open(capture_directory)
 	if dir == null:
 		return
@@ -229,7 +241,12 @@ func capture_360() -> void:
 					image.convert(Image.FORMAT_RGB8)
 
 				var base_path := "%s/%sf%03d_%03d" % [capture_directory, file_prefix, f, int(angle)]
-				save_image(image, base_path)
+				if OS.has_feature("web"):
+					var fname := "%sf%03d_%03d" % [file_prefix, f, int(angle)]
+					var buf := save_image_web_buffer(image, fname)
+					_web_capture_buffers.append({"name": fname, "data": buf})
+				else:
+					save_image(image, base_path)
 	else:
 		for i in range(capture_count):
 			var angle := step_degrees * i
@@ -245,13 +262,40 @@ func capture_360() -> void:
 				image.convert(Image.FORMAT_RGB8)
 
 			var base_path := "%s/%s%03d" % [capture_directory, file_prefix, int(angle)]
-			save_image(image, base_path)
+			if OS.has_feature("web"):
+				var fname := "%s%03d" % [file_prefix, int(angle)]
+				var buf := save_image_web_buffer(image, fname)
+				_web_capture_buffers.append({"name": fname, "data": buf})
+			else:
+				save_image(image, base_path)
 
 	print("Captura 360° completada.")
 	print("Guardado en:", ProjectSettings.globalize_path(capture_directory))
 
+	# Si estamos en web, empaquetar y descargar un ZIP con todas las capturas
+	if OS.has_feature("web") and _web_capture_buffers.size() > 0:
+		var zip_name := file_prefix + ".zip"
+		var zip_data := build_zip_from_files(_web_capture_buffers)
+		JavaScriptBridge.download_buffer(zip_data, zip_name, "application/zip")
+		_web_capture_buffers.clear()
+
 # ---------- GUARDAR ----------
 func save_image(image: Image, base_path: String):
+	if OS.has_feature("web"):
+		var file_name := base_path.get_file()
+		match image_format:
+			ImageFormat.PNG:
+				JavaScriptBridge.download_buffer(image.save_png_to_buffer(), file_name + ".png")
+			ImageFormat.JPG:
+				JavaScriptBridge.download_buffer(image.save_jpg_to_buffer(0.95), file_name + ".jpg")
+			ImageFormat.WEBP:
+				JavaScriptBridge.download_buffer(image.save_webp_to_buffer(), file_name + ".webp")
+			ImageFormat.XPM:
+				JavaScriptBridge.download_buffer(build_xpm_rgba_text(image).to_utf8_buffer(), file_name + ".xpm")
+			ImageFormat.XPM_ARGB:
+				JavaScriptBridge.download_buffer(build_xpm_argb_text(image).to_utf8_buffer(), file_name + ".xpm")
+		return
+
 	match image_format:
 		ImageFormat.PNG:
 			image.save_png(base_path + ".png")
@@ -265,13 +309,258 @@ func save_image(image: Image, base_path: String):
 			save_xpm_argb(image, base_path + ".xpm")
 
 
+func save_image_web_buffer(image: Image, _name_without_ext: String) -> PackedByteArray:
+	if image_format == ImageFormat.PNG:
+		return image.save_png_to_buffer()
+	elif image_format == ImageFormat.JPG:
+		return image.save_jpg_to_buffer(0.95)
+	elif image_format == ImageFormat.WEBP:
+		return image.save_webp_to_buffer()
+	elif image_format == ImageFormat.XPM:
+		return build_xpm_rgba_text(image).to_utf8_buffer()
+	elif image_format == ImageFormat.XPM_ARGB:
+		return build_xpm_argb_text(image).to_utf8_buffer()
+	# Por defecto
+	return PackedByteArray()
+
+
+func _u16_le(val: int) -> PackedByteArray:
+	var a := PackedByteArray()
+	var u := val & 0xFFFF
+	a.append(u & 0xFF)
+	a.append((u >> 8) & 0xFF)
+	return a
+
+
+func _u32_le(val: int) -> PackedByteArray:
+	var a := PackedByteArray()
+	var u := val & 0xFFFFFFFF
+	a.append(u & 0xFF)
+	a.append((u >> 8) & 0xFF)
+	a.append((u >> 16) & 0xFF)
+	a.append((u >> 24) & 0xFF)
+	return a
+
+
+func _append_pba(dest: PackedByteArray, src: PackedByteArray) -> void:
+	for b in src:
+		dest.append(b)
+
+
+func crc32(data: PackedByteArray) -> int:
+	var table: Array[int] = []
+	# generar tabla localmente cada vez (suficiente para este uso)
+	for i in range(256):
+		var c := i
+		for j in range(8):
+			if (c & 1) != 0:
+				c = (0xEDB88320 ^ (c >> 1)) & 0xFFFFFFFF
+			else:
+				c = (c >> 1) & 0xFFFFFFFF
+		table.append(c)
+
+	var crc := 0xFFFFFFFF
+	for byte in data:
+		var idx := int((crc ^ byte) & 0xFF)
+		crc = ((crc >> 8) ^ table[idx]) & 0xFFFFFFFF
+	crc = crc ^ 0xFFFFFFFF
+	return crc & 0xFFFFFFFF
+
+
+func build_zip_from_files(files: Array) -> PackedByteArray:
+	# files: array of {name: String, data: PackedByteArray}
+	var out := PackedByteArray()
+	var central := PackedByteArray()
+
+	for f in files:
+		var filename: String = str(f["name"])
+		# agregar extensión según formato
+		var ext := ".png"
+		if image_format == ImageFormat.PNG:
+			ext = ".png"
+		elif image_format == ImageFormat.JPG:
+			ext = ".jpg"
+		elif image_format == ImageFormat.WEBP:
+			ext = ".webp"
+		elif image_format == ImageFormat.XPM or image_format == ImageFormat.XPM_ARGB:
+			ext = ".xpm"
+		var name_full: String = filename + ext
+		var name_bytes: PackedByteArray = name_full.to_utf8_buffer()
+		var data: PackedByteArray = f["data"]
+		var crc: int = crc32(data)
+		var size: int = data.size()
+
+		# record current offset for this local header
+		var local_header_offset: int = out.size()
+
+		# Local file header
+		_append_pba(out, _u32_le(0x04034b50))
+		_append_pba(out, _u16_le(20))
+		_append_pba(out, _u16_le(0))
+		_append_pba(out, _u16_le(0))
+		_append_pba(out, _u16_le(0))
+		_append_pba(out, _u16_le(0))
+		_append_pba(out, _u32_le(crc))
+		_append_pba(out, _u32_le(size))
+		_append_pba(out, _u32_le(size))
+		_append_pba(out, _u16_le(name_bytes.size()))
+		_append_pba(out, _u16_le(0))
+		_append_pba(out, name_bytes)
+		_append_pba(out, data)
+
+		# Central directory entry
+		_append_pba(central, _u32_le(0x02014b50))
+		_append_pba(central, _u16_le(0))
+		_append_pba(central, _u16_le(20))
+		_append_pba(central, _u16_le(0))
+		_append_pba(central, _u16_le(0))
+		_append_pba(central, _u16_le(0))
+		_append_pba(central, _u16_le(0))
+		_append_pba(central, _u32_le(crc))
+		_append_pba(central, _u32_le(size))
+		_append_pba(central, _u32_le(size))
+		_append_pba(central, _u16_le(name_bytes.size()))
+		_append_pba(central, _u16_le(0))
+		_append_pba(central, _u16_le(0))
+		_append_pba(central, _u16_le(0))
+		_append_pba(central, _u16_le(0))
+		_append_pba(central, _u32_le(0))
+		_append_pba(central, _u32_le(local_header_offset))
+		_append_pba(central, name_bytes)
+
+	var central_offset := out.size()
+	var central_size := central.size()
+
+	# concatenar central al out
+	_append_pba(out, central)
+
+	# End of central directory
+	_append_pba(out, _u32_le(0x06054b50))
+	_append_pba(out, _u16_le(0))
+	_append_pba(out, _u16_le(0))
+	_append_pba(out, _u16_le(files.size()))
+	_append_pba(out, _u16_le(files.size()))
+	_append_pba(out, _u32_le(central_size))
+	_append_pba(out, _u32_le(central_offset))
+	_append_pba(out, _u16_le(0))
+
+	return out
+
+
+func build_xpm_rgba_text(image: Image) -> String:
+	image.convert(Image.FORMAT_RGBA8)
+	var w := image.get_width()
+	var h := image.get_height()
+	var palette := {}
+	var palette_list := []
+	var pixels := []
+
+	for y in range(h):
+		var row := []
+		for x in range(w):
+			var c := image.get_pixel(x, y)
+			var key: String
+			if c.a <= 0.0:
+				key = "None"
+			else:
+				key = "%02X%02X%02X" % [
+					int(c.r * 255),
+					int(c.g * 255),
+					int(c.b * 255)
+				]
+			if not palette.has(key):
+				palette[key] = palette.size()
+				palette_list.append(key)
+			row.append(key)
+		pixels.append(row)
+
+	var base := XPM_CHARS.length()
+	var color_count := palette.size()
+	var chars_per_pixel := 1
+	while pow(base, chars_per_pixel) < color_count:
+		chars_per_pixel += 1
+
+	var lines := PackedStringArray()
+	lines.append("/* XPM */")
+	lines.append("static char * image_xpm[] = {")
+	lines.append("\"%d %d %d %d\"," % [w, h, color_count, chars_per_pixel])
+	for key in palette_list:
+		var code := xpm_code(palette[key], chars_per_pixel)
+		if key == "None":
+			lines.append("\"%s c None\"," % code)
+		else:
+			lines.append("\"%s c #%s\"," % [code, key])
+	for y in range(h):
+		var line := ""
+		for x in range(w):
+			var idx: int = palette[pixels[y][x]]
+			line += xpm_code(idx, chars_per_pixel)
+		lines.append("\"%s\"," % line)
+	lines.append("};")
+	return "\n".join(lines)
+
+
+func build_xpm_argb_text(image: Image) -> String:
+	image.convert(Image.FORMAT_RGBA8)
+	var w := image.get_width()
+	var h := image.get_height()
+	var palette := {}
+	var palette_list := []
+	var pixels := []
+
+	for y in range(h):
+		var row := []
+		for x in range(w):
+			var c := image.get_pixel(x, y)
+			var key: String
+			if c.a <= 0.0:
+				key = "None"
+			else:
+				key = "%02X%02X%02X%02X" % [
+					int(c.a * 255),
+					int(c.r * 255),
+					int(c.g * 255),
+					int(c.b * 255)
+				]
+			if not palette.has(key):
+				palette[key] = palette.size()
+				palette_list.append(key)
+			row.append(key)
+		pixels.append(row)
+
+	var base := XPM_CHARS.length()
+	var color_count := palette.size()
+	var chars_per_pixel := 1
+	while pow(base, chars_per_pixel) < color_count:
+		chars_per_pixel += 1
+
+	var lines := PackedStringArray()
+	lines.append("/* XPM */")
+	lines.append("static char * image_xpm[] = {")
+	lines.append("\"%d %d %d %d\"," % [w, h, color_count, chars_per_pixel])
+	for key in palette_list:
+		var code := xpm_code(palette[key], chars_per_pixel)
+		if key == "None":
+			lines.append("\"%s c None\"," % code)
+		else:
+			lines.append("\"%s c #%s\"," % [code, key])
+	for y in range(h):
+		var line := ""
+		for x in range(w):
+			var idx: int = palette[pixels[y][x]]
+			line += xpm_code(idx, chars_per_pixel)
+		lines.append("\"%s\"," % line)
+	lines.append("};")
+	return "\n".join(lines)
+
+
 func xpm_code(index: int, chars_per_pixel: int) -> String:
 	var base := XPM_CHARS.length()
 	var code := ""
 
 	for i in range(chars_per_pixel):
 		code = XPM_CHARS[index % base] + code
-		index = int(index / base)
+		index = floori(float(index) / float(base))
 
 	return code
 
@@ -448,24 +737,86 @@ func save_xpm_argb(image: Image, path: String):
 
 
 func _on_import_button_pressed() -> void:
+	if OS.has_feature("web"):
+		_open_web_model_picker()
+		return
 	file_dialog.popup()
 
 func _on_file_selected(path: String):
 	load_glb_runtime(path)
 
+
+func _open_web_model_picker() -> void:
+	if _web_import_callback_ref == null:
+		_web_import_callback_ref = JavaScriptBridge.create_callback(_on_web_model_file_picked)
+
+	JavaScriptBridge.eval("""
+window.__prerenderPickModel = function(done) {
+	const input = document.createElement('input');
+	input.type = 'file';
+	input.accept = '.glb';
+	input.style.display = 'none';
+	input.onchange = function() {
+		if (!input.files || !input.files.length) {
+			done('', '');
+			input.remove();
+			return;
+		}
+		const file = input.files[0];
+		const reader = new FileReader();
+		reader.onload = function() {
+			done(reader.result, file.name);
+			input.remove();
+		};
+		reader.onerror = function() {
+			done('', file.name);
+			input.remove();
+		};
+		reader.readAsDataURL(file);
+	};
+	document.body.appendChild(input);
+	input.click();
+};
+""", true)
+	var window := JavaScriptBridge.get_interface("window")
+	window.__prerenderPickModel(_web_import_callback_ref)
+
+
+func _on_web_model_file_picked(args: Array) -> void:
+	if args.size() < 2:
+		return
+
+	var data_url := str(args[0])
+	var file_name := str(args[1])
+	if data_url.is_empty():
+		return
+
+	var comma_pos := data_url.find(",")
+	if comma_pos == -1:
+		push_error("No se pudo leer el modelo del navegador: formato de datos inválido")
+		return
+
+	var raw_data := Marshalls.base64_to_raw(data_url.substr(comma_pos + 1))
+	load_glb_runtime_from_bytes(raw_data, file_name)
+
 func load_glb_runtime(path: String) -> void:
+	var file := FileAccess.open(path, FileAccess.READ)
+	if file == null:
+		push_error("Archivo GLB no existe: %s" % path)
+		return
+	var data := file.get_buffer(file.get_length())
+	load_glb_runtime_from_bytes(data, path.get_file())
+
+
+func load_glb_runtime_from_bytes(data: PackedByteArray, source_name: String = "") -> void:
 	# Limpia modelos previos
 	for child in render_scene.get_children():
 		child.queue_free()
 
-	if not FileAccess.file_exists(path):
-		push_error("Archivo GLB no existe: %s" % path)
-		return
-
 	var gltf: GLTFDocument = GLTFDocument.new()
 	var state: GLTFState = GLTFState.new()
 
-	var err: int = gltf.append_from_file(path, state)
+	var err: int = gltf.append_from_buffer(data, source_name, state)
 	if err != OK:
 		push_error("Error cargando GLB: %s" % str(err))
 		return
@@ -505,7 +856,7 @@ func _apply_user_scale() -> void:
 	var user_scale: float = float(scale_spin.value)
 	current_model.scale = Vector3.ONE * user_scale
 
-func _on_scale_changed(value: float) -> void:
+func _on_scale_changed(_value: float) -> void:
 	_apply_user_scale()
 
 
