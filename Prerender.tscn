@@ -123,9 +123,9 @@ anchors_preset = -1
 anchor_left = 0.858333
 anchor_right = 0.858333
 offset_left = 27.0
-offset_top = 1011.0
+offset_top = 1035.0
 offset_right = 226.0
-offset_bottom = 1042.0
+offset_bottom = 1066.0
 text = "Render"
 metadata/_edit_use_anchors_ = true
 
@@ -209,7 +209,7 @@ max_value = 999.0
 value = 1.0
 metadata/_edit_use_anchors_ = true
 
-[node name="NCaptures_text" type="Label" parent="Control"]
+[node name="NViews_text" type="Label" parent="Control"]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.858333
@@ -218,10 +218,10 @@ offset_left = 27.0
 offset_top = 879.0
 offset_right = 138.0
 offset_bottom = 907.0
-text = "N Captures"
+text = "N Views"
 metadata/_edit_use_anchors_ = true
 
-[node name="NCaptures" type="SpinBox" parent="Control"]
+[node name="NViews" type="SpinBox" parent="Control"]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.858333
@@ -257,6 +257,18 @@ offset_right = 215.0
 offset_bottom = 996.0
 metadata/_edit_use_anchors_ = true
 
+[node name="AtlasModeCheck" type="CheckBox" parent="Control"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.858333
+anchor_right = 0.858333
+offset_left = 27.0
+offset_top = 998.0
+offset_right = 227.0
+offset_bottom = 1029.0
+text = "Atlas mode"
+metadata/_edit_use_anchors_ = true
+
 [node name="ImportButton" type="Button" parent="Control"]
 layout_mode = 0
 offset_left = 28.0
@@ -271,6 +283,9 @@ ok_button_text = "Open"
 file_mode = 0
 access = 2
 filters = PackedStringArray("*.glb ; GLB 3D Model")
+
+[node name="AtlasErrorDialog" type="AcceptDialog" parent="Control"]
+title = "Atlas mode error"
 
 [node name="Scale" type="Label" parent="Control"]
 layout_mode = 0

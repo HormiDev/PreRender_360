@@ -15,12 +15,13 @@ enum ImageFormat {
 
 # ---------- CONSTANTES XPM ----------
 const XPM_CHARS := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!#$%&()*+,-./:;<=>?@[]^_"
+const ATLAS_MAX_PIXELS := 268435456
 
 
 # ---------- UI ----------
 @onready var width_spin: SpinBox = $Control/RenderWidth
 @onready var height_spin: SpinBox = $Control/RenderHeigth
-@onready var captures_spin: SpinBox = $Control/NCaptures
+@onready var captures_spin: SpinBox = $Control/NViews
 @onready var format_option: OptionButton = $Control/ImageFormat
 @onready var file_prefix_input: LineEdit = $Control/FilePrefixInput
 @onready var capture_button: Button = $Control/Button
@@ -40,6 +41,8 @@ const XPM_CHARS := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567
 @onready var render_pos_y_spin: SpinBox = $Control.get_node_or_null("RenderPosYSpin")
 @onready var render_pos_z_spin: SpinBox = $Control.get_node_or_null("RenderPosZSpin")
 @onready var n_frames_spin: SpinBox = $Control.get_node_or_null("NFrames")
+@onready var atlas_mode_check: CheckBox = $Control.get_node_or_null("AtlasModeCheck")
+@onready var atlas_error_dialog: AcceptDialog = $Control.get_node_or_null("AtlasErrorDialog")
 
 
 # ---------- RENDER ----------
@@ -138,9 +141,47 @@ func _on_button_pressed():
 	else:
 		file_prefix = "capture_angle_"
 
+	if not _validate_atlas_mode_limits():
+		return
+
 	viewport.size = Vector2i(render_width, render_height)
 
 	await capture_360()
+
+
+func _validate_atlas_mode_limits() -> bool:
+	if atlas_mode_check == null or not atlas_mode_check.button_pressed:
+		return true
+
+	var anim_player := _find_animation_player(current_model) if current_model else null
+	var has_anim := anim_player != null and anim_player.get_animation_list().size() > 0
+	var total_frames := 1
+	if has_anim:
+		total_frames = int(n_frames_spin.value) if n_frames_spin else 30
+		if total_frames <= 0:
+			total_frames = 1
+
+	var atlas_width := render_width * total_frames
+	var atlas_height := render_height * capture_count
+	var atlas_pixels := atlas_width * atlas_height
+	if atlas_pixels <= ATLAS_MAX_PIXELS:
+		return true
+
+	atlas_mode_check.button_pressed = false
+	var message := "Atlas mode desactivado: la imagen resultante sería demasiado grande.\n\n"
+	message += "Tamaño calculado: %dx%d (%d píxeles).\n" % [atlas_width, atlas_height, atlas_pixels]
+	message += "Límite permitido: %d píxeles.\n\n" % ATLAS_MAX_PIXELS
+	message += "Reduce Render Width, N Views o N Frames, o vuelve a renderizar sin Atlas Mode."
+	_show_atlas_error(message)
+	return false
+
+
+func _show_atlas_error(message: String) -> void:
+	if atlas_error_dialog != null:
+		atlas_error_dialog.dialog_text = message
+		atlas_error_dialog.popup_centered()
+	else:
+		push_error(message)
 
 # ---------- CARPETA ----------
 func ensure_capture_folder():
@@ -208,13 +249,20 @@ func capture_360() -> void:
 
 	var anim_player := _find_animation_player(current_model) if current_model else null
 	var has_anim := anim_player != null and anim_player.get_animation_list().size() > 0
+	var atlas_mode := atlas_mode_check != null and atlas_mode_check.button_pressed
+	var total_frames := 1
+	if has_anim:
+		total_frames = int(n_frames_spin.value) if n_frames_spin else 30
+		if total_frames <= 0:
+			total_frames = 1
+
+	var atlas_image: Image = null
+	if atlas_mode:
+		atlas_image = Image.create(render_width * total_frames, render_height * capture_count, false, Image.FORMAT_RGBA8)
 
 	if has_anim:
 		var anim_name: String = anim_player.get_animation_list()[0]
 		var anim := anim_player.get_animation(anim_name)
-		var total_frames := int(n_frames_spin.value) if n_frames_spin else 30
-		if total_frames <= 0:
-			total_frames = 1
 
 		anim_player.play(anim_name)
 		anim_player.speed_scale = 0.0 # Pausar la reproducción automática
@@ -236,17 +284,17 @@ func capture_360() -> void:
 				await get_tree().process_frame
 
 				var image: Image = viewport.get_texture().get_image()
-
-				if image_format == ImageFormat.JPG:
-					image.convert(Image.FORMAT_RGB8)
-
-				var base_path := "%s/%sf%03d_%03d" % [capture_directory, file_prefix, f, int(angle)]
-				if OS.has_feature("web"):
-					var fname := "%sf%03d_%03d" % [file_prefix, f, int(angle)]
-					var buf := save_image_web_buffer(image, fname)
-					_web_capture_buffers.append({"name": fname, "data": buf})
+				if atlas_mode:
+					atlas_image.blit_rect(image, Rect2i(0, 0, render_width, render_height), Vector2i(f * render_width, i * render_height))
 				else:
-					save_image(image, base_path)
+					var image_to_save := _prepare_image_for_format(image)
+					var base_path := "%s/%sf%03d_%03d" % [capture_directory, file_prefix, f, int(angle)]
+					if OS.has_feature("web"):
+						var fname := "%sf%03d_%03d" % [file_prefix, f, int(angle)]
+						var buf := save_image_web_buffer(image_to_save, fname)
+						_web_capture_buffers.append({"name": fname, "data": buf})
+					else:
+						save_image(image_to_save, base_path)
 	else:
 		for i in range(capture_count):
 			var angle := step_degrees * i
@@ -257,23 +305,28 @@ func capture_360() -> void:
 			await get_tree().process_frame
 
 			var image: Image = viewport.get_texture().get_image()
-
-			if image_format == ImageFormat.JPG:
-				image.convert(Image.FORMAT_RGB8)
-
-			var base_path := "%s/%s%03d" % [capture_directory, file_prefix, int(angle)]
-			if OS.has_feature("web"):
-				var fname := "%s%03d" % [file_prefix, int(angle)]
-				var buf := save_image_web_buffer(image, fname)
-				_web_capture_buffers.append({"name": fname, "data": buf})
+			if atlas_mode:
+				atlas_image.blit_rect(image, Rect2i(0, 0, render_width, render_height), Vector2i(0, i * render_height))
 			else:
-				save_image(image, base_path)
+				var image_to_save := _prepare_image_for_format(image)
+				var base_path := "%s/%s%03d" % [capture_directory, file_prefix, int(angle)]
+				if OS.has_feature("web"):
+					var fname := "%s%03d" % [file_prefix, int(angle)]
+					var buf := save_image_web_buffer(image_to_save, fname)
+					_web_capture_buffers.append({"name": fname, "data": buf})
+				else:
+					save_image(image_to_save, base_path)
+
+	if atlas_mode and atlas_image != null:
+		var atlas_to_save := _prepare_image_for_format(atlas_image)
+		var atlas_base_path := "%s/%satlas" % [capture_directory, file_prefix]
+		save_image(atlas_to_save, atlas_base_path)
 
 	print("Captura 360° completada.")
 	print("Guardado en:", ProjectSettings.globalize_path(capture_directory))
 
 	# Si estamos en web, empaquetar y descargar un ZIP con todas las capturas
-	if OS.has_feature("web") and _web_capture_buffers.size() > 0:
+	if OS.has_feature("web") and not atlas_mode and _web_capture_buffers.size() > 0:
 		var zip_name := file_prefix + ".zip"
 		var zip_data := build_zip_from_files(_web_capture_buffers)
 		JavaScriptBridge.download_buffer(zip_data, zip_name, "application/zip")
@@ -307,6 +360,13 @@ func save_image(image: Image, base_path: String):
 			save_xpm_rgba(image, base_path + ".xpm")
 		ImageFormat.XPM_ARGB:
 			save_xpm_argb(image, base_path + ".xpm")
+
+
+func _prepare_image_for_format(source_image: Image) -> Image:
+	var image := source_image.duplicate()
+	if image_format == ImageFormat.JPG:
+		image.convert(Image.FORMAT_RGB8)
+	return image
 
 
 func save_image_web_buffer(image: Image, _name_without_ext: String) -> PackedByteArray:
