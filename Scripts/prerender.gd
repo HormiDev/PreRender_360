@@ -126,7 +126,6 @@ func _ready():
 	_on_light_color_changed(0)
 
 
-
 # ---------- BOTÓN ----------
 func _on_button_pressed():
 	print("Iniciando captura 360°...")

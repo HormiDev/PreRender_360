@@ -1,6 +1,8 @@
-[gd_scene load_steps=7 format=4 uid="uid://dpm6uda3la667"]
+[gd_scene load_steps=9 format=4 uid="uid://dpm6uda3la667"]
 
-[ext_resource type="Script" uid="uid://cb7ixot3vn6cg" path="res://prerender.gd" id="1_nmjra"]
+[ext_resource type="Script" uid="uid://cb7ixot3vn6cg" path="res://Scripts/prerender.gd" id="1_nmjra"]
+[ext_resource type="Texture2D" uid="uid://d2w2mdyfh1s0a" path="res://logo_github.svg" id="2_nmjra"]
+[ext_resource type="Script" uid="uid://b7tai1raj74a0" path="res://Scripts/github_button.gd" id="3_8jw8o"]
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_6mh43"]
 load_path = "res://.godot/imported/robot_0.png-7c152170a05c6602874d8bbe2045469e.s3tc.ctex"
@@ -279,6 +281,7 @@ text = "import model .glb"
 
 [node name="FileDialog" type="FileDialog" parent="Control"]
 title = "Open a File"
+exclusive = false
 ok_button_text = "Open"
 file_mode = 0
 access = 2
@@ -286,6 +289,7 @@ filters = PackedStringArray("*.glb ; GLB 3D Model")
 
 [node name="AtlasErrorDialog" type="AcceptDialog" parent="Control"]
 title = "Atlas mode error"
+exclusive = false
 
 [node name="Scale" type="Label" parent="Control"]
 layout_mode = 0
@@ -475,5 +479,24 @@ offset_right = 233.563
 offset_bottom = 469.0
 min_value = -100.0
 step = 0.01
+
+[node name="GithubRepo" type="LinkButton" parent="Control"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 0
+offset_left = 10.0
+offset_top = 1005.0
+offset_right = 60.0
+offset_bottom = 1055.0
+scale = Vector2(1.25702, 1.255)
+uri = "https://github.com/HormiDev/PreRender_360"
+script = ExtResource("3_8jw8o")
+
+[node name="TextureRect" type="TextureRect" parent="Control/GithubRepo"]
+layout_mode = 0
+offset_right = 50.0
+offset_bottom = 50.0
+mouse_filter = 2
+texture = ExtResource("2_nmjra")
+expand_mode = 1
 
 [connection signal="pressed" from="Control/Button" to="." method="_on_button_pressed"]

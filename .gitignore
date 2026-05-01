@@ -2,3 +2,30 @@
 .godot/
 /android/
 /capture
+
+# Archivos generados automáticamente
+*.import
+*.export
+*.export.cfg
+export_presets.cfg
+
+# Archivos temporales
+*.tmp
+*.bak
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Archivos de compilación (C# / Mono)
+.mono/
+data_*/
+*.csproj
+*.sln
+
+# Archivos de caché
+.cache/
+
+# Archivos de editor
+*.log
+
