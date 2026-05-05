@@ -135,7 +135,7 @@ func _ready():
 # Args: none
 # Returns: void
 func _on_button_pressed():
-	print("Iniciando captura 360°...")
+	print("Starting 360° capture...")
 
 	render_width = int(width_spin.value)
 	render_height = int(height_spin.value)
@@ -224,7 +224,7 @@ func ensure_capture_folder():
 
 	var dir = DirAccess.open(base_dir)
 	if dir == null:
-		push_error("Ruta inválida: " + base_dir)
+		push_error("Invalid path: " + base_dir)
 		return
 
 	if not dir.dir_exists(folder_name):
@@ -365,8 +365,8 @@ func capture_360() -> void:
 		var atlas_base_path := "%s/%satlas" % [capture_directory, file_prefix]
 		save_image(atlas_to_save, atlas_base_path)
 
-	print("Captura 360° completada.")
-	print("Guardado en:", ProjectSettings.globalize_path(capture_directory))
+	print("360° capture completed.")
+	print("Saved to:", ProjectSettings.globalize_path(capture_directory))
 
 	# Si estamos en web, empaquetar y descargar un ZIP con todas las capturas
 	if OS.has_feature("web") and not atlas_mode and _web_capture_buffers.size() > 0:
@@ -740,7 +740,7 @@ func save_xpm_rgb(image: Image, path: String):
 	# 3. Escribir archivo
 	var file: FileAccess = FileAccess.open(path, FileAccess.WRITE)
 	if file == null:
-		push_error("No se pudo escribir XPM en: " + ProjectSettings.globalize_path(path))
+		push_error("Could not write XPM to: " + ProjectSettings.globalize_path(path))
 		return
 	file.store_line("/* XPM */")
 	file.store_line("static char * image_xpm[] = {")
@@ -801,7 +801,7 @@ func save_xpm_rgba(image: Image, path: String):
 		chars_per_pixel += 1
 	var file := FileAccess.open(path, FileAccess.WRITE)
 	if file == null:
-		push_error("No se pudo escribir XPM")
+		push_error("Could not write XPM")
 		return
 	file.store_line("/* XPM */")
 	file.store_line("static char * image_xpm[] = {")
@@ -865,7 +865,7 @@ func save_xpm_argb(image: Image, path: String):
 		chars_per_pixel += 1
 	var file := FileAccess.open(path, FileAccess.WRITE)
 	if file == null:
-		push_error("No se pudo escribir XPM")
+		push_error("Could not write XPM")
 		return
 	file.store_line("/* XPM */")
 	file.store_line("static char * image_xpm[] = {")
@@ -957,7 +957,7 @@ func _on_web_model_file_picked(args: Array) -> void:
 
 	var comma_pos := data_url.find(",")
 	if comma_pos == -1:
-		push_error("No se pudo leer el modelo del navegador: formato de datos inválido")
+		push_error("Could not read model from browser: invalid data format")
 		return
 
 	var raw_data := Marshalls.base64_to_raw(data_url.substr(comma_pos + 1))
@@ -969,7 +969,7 @@ func _on_web_model_file_picked(args: Array) -> void:
 func load_glb_runtime(path: String) -> void:
 	var file := FileAccess.open(path, FileAccess.READ)
 	if file == null:
-		push_error("Archivo GLB no existe: %s" % path)
+		push_error("GLB file does not exist: %s" % path)
 		return
 	var data := file.get_buffer(file.get_length())
 	load_glb_runtime_from_bytes(data, path.get_file())
@@ -989,12 +989,12 @@ func load_glb_runtime_from_bytes(data: PackedByteArray, source_name: String = ""
 
 	var err: int = gltf.append_from_buffer(data, source_name, state)
 	if err != OK:
-		push_error("Error cargando GLB: %s" % str(err))
+		push_error("Error loading GLB: %s" % str(err))
 		return
 
 	var scene: Node = gltf.generate_scene(state)
 	if scene == null:
-		push_error("No se pudo generar la escena desde GLB")
+		push_error("Could not generate scene from GLB")
 		return
 
 	# Se añade diferido para evitar crashes en SubViewport

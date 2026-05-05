@@ -376,6 +376,9 @@ var _format_option: OptionButton
 var _current_language := "en"
 
 
+# Description: Initializes language selector references, populates options and applies default language.
+# Args: none
+# Returns: void
 func _ready() -> void:
 	_control = get_parent() as Control
 	if _control == null:
@@ -390,14 +393,23 @@ func _ready() -> void:
 		_language_option.item_selected.connect(_on_language_selected)
 
 
+# Description: Applies a language code externally.
+# Args: language_code (String) — language code to apply
+# Returns: void
 func set_language(language_code: String) -> void:
 	_apply_language(language_code)
 
 
+# Description: Returns the currently active language code.
+# Args: none
+# Returns: String — active language code
 func get_current_language() -> String:
 	return _current_language
 
 
+# Description: Returns a localized text for a key with fallback to English.
+# Args: key (String) — translation key
+# Returns: String — localized text or key if not found
 func get_text(key: String) -> String:
 	var texts: Dictionary = UI_TEXTS.get(_current_language, UI_TEXTS["en"])
 	if texts.has(key):
@@ -410,6 +422,9 @@ func get_text(key: String) -> String:
 	return key
 
 
+# Description: Fills the language option button with all available language labels.
+# Args: none
+# Returns: void
 func _populate_language_options() -> void:
 	if _language_option == null:
 		return
@@ -419,6 +434,9 @@ func _populate_language_options() -> void:
 		_language_option.add_item(LANGUAGE_LABELS[language_code])
 
 
+# Description: Handles language option selection changes.
+# Args: index (int) — selected option index
+# Returns: void
 func _on_language_selected(index: int) -> void:
 	if index < 0 or index >= LANGUAGE_CODES.size():
 		return
@@ -426,6 +444,9 @@ func _on_language_selected(index: int) -> void:
 	_apply_language(LANGUAGE_CODES[index])
 
 
+# Description: Applies all UI texts for the provided language code.
+# Args: language_code (String) — requested language code
+# Returns: void
 func _apply_language(language_code: String) -> void:
 	if not UI_TEXTS.has(language_code):
 		language_code = "en"
@@ -465,6 +486,9 @@ func _apply_language(language_code: String) -> void:
 		_language_option.set_block_signals(false)
 
 
+# Description: Updates image format option labels.
+# Args: none
+# Returns: void
 func _translate_format_options() -> void:
 	if _format_option == null or _format_option.item_count < 5:
 		return
@@ -476,6 +500,11 @@ func _translate_format_options() -> void:
 	_format_option.set_item_text(4, "XPM_ARGB")
 
 
+# Description: Sets a property on a UI node when that node exists.
+# Args: node_name (String) — target node name under control root
+#       property_name (String) — property to modify
+#       value (Variant) — value to assign
+# Returns: void
 func _set_text(node_name: String, property_name: String, value) -> void:
 	if _control == null:
 		return
