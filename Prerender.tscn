@@ -1,31 +1,32 @@
-[gd_scene load_steps=5 format=3 uid="uid://dpm6uda3la667"]
+[gd_scene format=3 uid="uid://dpm6uda3la667"]
 
 [ext_resource type="Script" uid="uid://cb7ixot3vn6cg" path="res://Scripts/prerender.gd" id="1_nmjra"]
-[ext_resource type="PackedScene" uid="uid://mvcsnqi8pym2" path="res://Robot_PreRender_360.glb" id="2_jv76k"]
+[ext_resource type="PackedScene" uid="uid://mvcsnqi8pym2" path="res://Example_model/Robot_PreRender_360.glb" id="2_jv76k"]
 [ext_resource type="Texture2D" uid="uid://d2w2mdyfh1s0a" path="res://logo_github.svg" id="2_nmjra"]
 [ext_resource type="Script" uid="uid://b7tai1raj74a0" path="res://Scripts/github_button.gd" id="3_8jw8o"]
+[ext_resource type="Script" uid="uid://ckgrl6sgpptqo" path="res://Scripts/language_selector.gd" id="4_lang1"]
 
-[node name="Prerender" type="Node3D"]
+[node name="Prerender" type="Node3D" unique_id=2021081997]
 script = ExtResource("1_nmjra")
 default_model = ExtResource("2_jv76k")
 
-[node name="SubViewport" type="SubViewport" parent="."]
+[node name="SubViewport" type="SubViewport" parent="." unique_id=93327156]
 transparent_bg = true
 render_target_update_mode = 4
 
-[node name="RenderScene" type="Node3D" parent="SubViewport"]
+[node name="RenderScene" type="Node3D" parent="SubViewport" unique_id=1213114864]
 
-[node name="Camera3D" type="Camera3D" parent="SubViewport"]
+[node name="RenderCamera3D" type="Camera3D" parent="SubViewport" unique_id=929207578]
 transform = Transform3D(0.996979, 0, 0, 0, 0.996979, 0, 0, 0, 0.996979, 0, 0, 1.68934)
 fov = 45.0
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="SubViewport"]
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="SubViewport" unique_id=1605465169]
 
-[node name="Camera3D" type="Camera3D" parent="."]
+[node name="Camera3D" type="Camera3D" parent="." unique_id=831506227]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.68983)
 fov = 45.0
 
-[node name="Control" type="Control" parent="."]
+[node name="Control" type="Control" parent="." unique_id=1386501373]
 clip_contents = true
 layout_mode = 3
 anchors_preset = 15
@@ -34,10 +35,10 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Button" type="Button" parent="Control"]
+[node name="Button" type="Button" parent="Control" unique_id=1018349512]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.858333
+anchor_left = 0.84583336
 anchor_right = 0.858333
 offset_left = 27.0
 offset_top = 1035.0
@@ -46,11 +47,11 @@ offset_bottom = 1066.0
 text = "Render"
 metadata/_edit_use_anchors_ = true
 
-[node name="RenderWidth_text" type="Label" parent="Control"]
+[node name="RenderWidth_text" type="Label" parent="Control" unique_id=549764416]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.858333
-anchor_right = 0.858333
+anchor_left = 0.84010416
+anchor_right = 0.84010416
 offset_left = 27.0
 offset_top = 800.0
 offset_right = 137.0
@@ -58,7 +59,7 @@ offset_bottom = 828.0
 text = "Render Width"
 metadata/_edit_use_anchors_ = true
 
-[node name="RenderWidth" type="SpinBox" parent="Control"]
+[node name="RenderWidth" type="SpinBox" parent="Control" unique_id=1172912045]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.858333
@@ -71,11 +72,11 @@ max_value = 10000.0
 value = 512.0
 metadata/_edit_use_anchors_ = true
 
-[node name="RenderHeigth_text" type="Label" parent="Control"]
+[node name="RenderHeigth_text" type="Label" parent="Control" unique_id=108730869]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.858333
-anchor_right = 0.858333
+anchor_left = 0.84010416
+anchor_right = 0.84010416
 offset_left = 27.0
 offset_top = 838.0
 offset_right = 138.0
@@ -83,7 +84,7 @@ offset_bottom = 866.0
 text = "Render Heigth"
 metadata/_edit_use_anchors_ = true
 
-[node name="RenderHeigth" type="SpinBox" parent="Control"]
+[node name="RenderHeigth" type="SpinBox" parent="Control" unique_id=1729208489]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.858333
@@ -96,12 +97,12 @@ max_value = 10000.0
 value = 512.0
 metadata/_edit_use_anchors_ = true
 
-[node name="NFrames_text" type="Label" parent="Control"]
+[node name="NFrames_text" type="Label" parent="Control" unique_id=805182149]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.743594
+anchor_left = 0.7253651
 anchor_top = -0.775
-anchor_right = 0.743594
+anchor_right = 0.7253652
 anchor_bottom = -0.775
 offset_left = 248.3
 offset_top = 1756.0
@@ -110,7 +111,7 @@ offset_bottom = 1784.0
 text = "N Frames"
 metadata/_edit_use_anchors_ = true
 
-[node name="NFrames" type="SpinBox" parent="Control"]
+[node name="NFrames" type="SpinBox" parent="Control" unique_id=1172496361]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.743594
@@ -126,11 +127,11 @@ max_value = 999.0
 value = 1.0
 metadata/_edit_use_anchors_ = true
 
-[node name="NViews_text" type="Label" parent="Control"]
+[node name="NViews_text" type="Label" parent="Control" unique_id=1597126381]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.858333
-anchor_right = 0.858333
+anchor_left = 0.84010416
+anchor_right = 0.84010416
 offset_left = 27.0
 offset_top = 879.0
 offset_right = 138.0
@@ -138,7 +139,7 @@ offset_bottom = 907.0
 text = "N Views"
 metadata/_edit_use_anchors_ = true
 
-[node name="NViews" type="SpinBox" parent="Control"]
+[node name="NViews" type="SpinBox" parent="Control" unique_id=214370149]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.858333
@@ -151,11 +152,11 @@ max_value = 3600.0
 value = 36.0
 metadata/_edit_use_anchors_ = true
 
-[node name="ImageFormat_text" type="Label" parent="Control"]
+[node name="ImageFormat_text" type="Label" parent="Control" unique_id=40037047]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.858333
-anchor_right = 0.858333
+anchor_left = 0.84010416
+anchor_right = 0.84010416
 offset_left = 28.0
 offset_top = 964.0
 offset_right = 139.0
@@ -163,7 +164,7 @@ offset_bottom = 992.0
 text = "Format image"
 metadata/_edit_use_anchors_ = true
 
-[node name="ImageFormat" type="OptionButton" parent="Control"]
+[node name="ImageFormat" type="OptionButton" parent="Control" unique_id=41819076]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.858333
@@ -174,11 +175,11 @@ offset_right = 215.0
 offset_bottom = 996.0
 metadata/_edit_use_anchors_ = true
 
-[node name="AtlasModeCheck" type="CheckBox" parent="Control"]
+[node name="AtlasModeCheck" type="CheckBox" parent="Control" unique_id=376638723]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.858333
-anchor_right = 0.858333
+anchor_left = 0.84010416
+anchor_right = 0.84010416
 offset_left = 27.0
 offset_top = 998.0
 offset_right = 227.0
@@ -186,15 +187,33 @@ offset_bottom = 1029.0
 text = "Atlas mode"
 metadata/_edit_use_anchors_ = true
 
-[node name="ImportButton" type="Button" parent="Control"]
+[node name="ImportButton" type="Button" parent="Control" unique_id=1274385209]
 layout_mode = 0
 offset_left = 28.0
-offset_top = 26.0
+offset_top = 71.0
 offset_right = 227.0
-offset_bottom = 57.0
+offset_bottom = 102.0
 text = "import model .glb"
 
-[node name="FileDialog" type="FileDialog" parent="Control"]
+[node name="Language_text" type="Label" parent="Control" unique_id=204186453]
+layout_mode = 0
+offset_left = 27.0
+offset_top = 24.0
+offset_right = 138.0
+offset_bottom = 52.0
+text = "Language"
+
+[node name="LanguageOptionButton" type="OptionButton" parent="Control" unique_id=204186454]
+layout_mode = 0
+offset_left = 115.0
+offset_top = 22.0
+offset_right = 175.0
+offset_bottom = 53.0
+
+[node name="LanguageSelector" type="Node" parent="Control" unique_id=204186455]
+script = ExtResource("4_lang1")
+
+[node name="FileDialog" type="FileDialog" parent="Control" unique_id=1759851900]
 title = "Open a File"
 exclusive = false
 ok_button_text = "Open"
@@ -202,38 +221,39 @@ file_mode = 0
 access = 2
 filters = PackedStringArray("*.glb ; GLB 3D Model")
 
-[node name="AtlasErrorDialog" type="AcceptDialog" parent="Control"]
+[node name="AtlasErrorDialog" type="AcceptDialog" parent="Control" unique_id=369360575]
 title = "Atlas mode error"
 exclusive = false
 
-[node name="Scale" type="Label" parent="Control"]
+[node name="Scale" type="Label" parent="Control" unique_id=1086009282]
 layout_mode = 0
 offset_left = 27.0
-offset_top = 80.0
+offset_top = 125.0
 offset_right = 138.0
-offset_bottom = 108.0
+offset_bottom = 153.0
 text = "Scale Model"
 
-[node name="ScaleSpin" type="SpinBox" parent="Control"]
+[node name="ScaleSpin" type="SpinBox" parent="Control" unique_id=239388762]
 layout_mode = 0
-offset_left = 147.0
-offset_top = 78.0
-offset_right = 233.563
-offset_bottom = 109.0
+offset_left = 188.0
+offset_top = 123.0
+offset_right = 274.563
+offset_bottom = 154.0
 min_value = 0.1
 max_value = 10.0
 step = 0.01
 value = 1.0
 
-[node name="LigthRotaton_text" type="Label" parent="Control"]
+[node name="LigthRotaton_text" type="Label" parent="Control" unique_id=1121088066]
 layout_mode = 0
-offset_left = 1730.0
+offset_left = 1709.0
 offset_top = 50.0
-offset_right = 1841.0
+offset_right = 1873.0
 offset_bottom = 78.0
 text = "Ligth Rotation"
+horizontal_alignment = 1
 
-[node name="LightPitchSlider" type="HSlider" parent="Control"]
+[node name="LightPitchSlider" type="HSlider" parent="Control" unique_id=1939495429]
 layout_mode = 0
 offset_left = 1903.0
 offset_top = 14.0
@@ -243,7 +263,7 @@ rotation = 1.5708
 min_value = -90.0
 max_value = 90.0
 
-[node name="LightYawSlider" type="HSlider" parent="Control"]
+[node name="LightYawSlider" type="HSlider" parent="Control" unique_id=298416267]
 layout_mode = 0
 offset_left = 1681.0
 offset_top = 108.0
@@ -252,42 +272,44 @@ offset_bottom = 124.0
 min_value = -180.0
 max_value = 180.0
 
-[node name="ModelRotaton_text" type="Label" parent="Control"]
+[node name="ModelRotaton_text" type="Label" parent="Control" unique_id=1488295052]
 layout_mode = 0
-offset_left = 75.0
-offset_top = 173.0
-offset_right = 186.0
-offset_bottom = 201.0
+offset_left = 41.0
+offset_top = 218.0
+offset_right = 218.0
+offset_bottom = 246.0
 text = "Model Rotation"
+horizontal_alignment = 1
 
-[node name="ModelRotXSlider" type="HSlider" parent="Control"]
+[node name="ModelRotXSlider" type="HSlider" parent="Control" unique_id=476555313]
 layout_mode = 0
 offset_left = 248.0
-offset_top = 137.0
+offset_top = 182.0
 offset_right = 453.0
-offset_bottom = 153.0
+offset_bottom = 198.0
 rotation = 1.5708
 min_value = -90.0
 max_value = 90.0
 
-[node name="ModelRotZSlider" type="HSlider" parent="Control"]
+[node name="ModelRotZSlider" type="HSlider" parent="Control" unique_id=1350647328]
 layout_mode = 0
 offset_left = 26.0
-offset_top = 231.0
+offset_top = 276.0
 offset_right = 231.0
-offset_bottom = 247.0
+offset_bottom = 292.0
 min_value = -180.0
 max_value = 180.0
 
-[node name="Ligthintensity_text" type="Label" parent="Control"]
+[node name="Ligthintensity_text" type="Label" parent="Control" unique_id=1644557535]
 layout_mode = 0
-offset_left = 1730.0
+offset_left = 1693.0
 offset_top = 230.0
-offset_right = 1841.0
+offset_right = 1874.0
 offset_bottom = 258.0
 text = "Ligth Intensity"
+horizontal_alignment = 1
 
-[node name="LightIntensitySlider" type="HSlider" parent="Control"]
+[node name="LightIntensitySlider" type="HSlider" parent="Control" unique_id=380163041]
 layout_mode = 0
 offset_left = 1681.0
 offset_top = 261.0
@@ -297,16 +319,16 @@ max_value = 10.0
 step = 0.01
 value = 1.0
 
-[node name="LigthColor_text" type="Label" parent="Control"]
+[node name="LigthColor_text" type="Label" parent="Control" unique_id=980438068]
 layout_mode = 0
-offset_left = 1730.0
+offset_left = 1691.0
 offset_top = 286.0
-offset_right = 1841.0
+offset_right = 1873.0
 offset_bottom = 314.0
 text = "Ligth Color"
 horizontal_alignment = 1
 
-[node name="LightRSlider" type="HSlider" parent="Control"]
+[node name="LightRSlider" type="HSlider" parent="Control" unique_id=1151172999]
 modulate = Color(1, 0, 0, 1)
 layout_mode = 0
 offset_left = 1681.0
@@ -316,7 +338,7 @@ offset_bottom = 333.0
 max_value = 255.0
 value = 255.0
 
-[node name="LightGSlider" type="HSlider" parent="Control"]
+[node name="LightGSlider" type="HSlider" parent="Control" unique_id=1176831856]
 modulate = Color(0, 1, 0, 1)
 layout_mode = 0
 offset_left = 1681.0
@@ -326,7 +348,7 @@ offset_bottom = 353.0
 max_value = 255.0
 value = 255.0
 
-[node name="LightBSlider" type="HSlider" parent="Control"]
+[node name="LightBSlider" type="HSlider" parent="Control" unique_id=1744312273]
 modulate = Color(0, 0, 1, 1)
 layout_mode = 0
 offset_left = 1681.0
@@ -336,66 +358,66 @@ offset_bottom = 373.0
 max_value = 255.0
 value = 255.0
 
-[node name="FilePrefixInput" type="LineEdit" parent="Control"]
+[node name="FilePrefixInput" type="LineEdit" parent="Control" unique_id=641045947]
 layout_mode = 0
-offset_left = 1676.0
+offset_left = 1650.0
 offset_top = 750.0
 offset_right = 1874.0
 offset_bottom = 781.0
 placeholder_text = "Save Name"
 
-[node name="XPosition_text" type="Label" parent="Control"]
+[node name="XPosition_text" type="Label" parent="Control" unique_id=1244129325]
 layout_mode = 0
 offset_left = 27.0
-offset_top = 360.0
+offset_top = 405.0
 offset_right = 138.0
-offset_bottom = 388.0
+offset_bottom = 433.0
 text = "X Position"
 
-[node name="RenderPosXSpin" type="SpinBox" parent="Control"]
+[node name="RenderPosXSpin" type="SpinBox" parent="Control" unique_id=577724354]
 layout_mode = 0
-offset_left = 147.0
-offset_top = 358.0
-offset_right = 233.563
-offset_bottom = 389.0
+offset_left = 188.0
+offset_top = 403.0
+offset_right = 274.563
+offset_bottom = 434.0
 min_value = -100.0
 step = 0.01
 
-[node name="YPosition_text" type="Label" parent="Control"]
+[node name="YPosition_text" type="Label" parent="Control" unique_id=104684558]
 layout_mode = 0
 offset_left = 27.0
-offset_top = 400.0
+offset_top = 445.0
 offset_right = 138.0
-offset_bottom = 428.0
+offset_bottom = 473.0
 text = "Y Position"
 
-[node name="RenderPosYSpin" type="SpinBox" parent="Control"]
+[node name="RenderPosYSpin" type="SpinBox" parent="Control" unique_id=1234646578]
 layout_mode = 0
-offset_left = 147.0
-offset_top = 398.0
-offset_right = 233.563
-offset_bottom = 429.0
+offset_left = 188.0
+offset_top = 443.0
+offset_right = 274.563
+offset_bottom = 474.0
 min_value = -100.0
 step = 0.01
 
-[node name="ZPosition_text" type="Label" parent="Control"]
+[node name="ZPosition_text" type="Label" parent="Control" unique_id=890006659]
 layout_mode = 0
 offset_left = 27.0
-offset_top = 440.0
+offset_top = 485.0
 offset_right = 138.0
-offset_bottom = 468.0
+offset_bottom = 513.0
 text = "Z Position"
 
-[node name="RenderPosZSpin" type="SpinBox" parent="Control"]
+[node name="RenderPosZSpin" type="SpinBox" parent="Control" unique_id=132296953]
 layout_mode = 0
-offset_left = 147.0
-offset_top = 438.0
-offset_right = 233.563
-offset_bottom = 469.0
+offset_left = 188.0
+offset_top = 483.0
+offset_right = 274.563
+offset_bottom = 514.0
 min_value = -100.0
 step = 0.01
 
-[node name="GithubRepo" type="LinkButton" parent="Control"]
+[node name="GithubRepo" type="LinkButton" parent="Control" unique_id=51565436]
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 0
 offset_left = 10.0
@@ -406,10 +428,11 @@ scale = Vector2(1.25702, 1.255)
 uri = "https://github.com/HormiDev/PreRender_360"
 script = ExtResource("3_8jw8o")
 
-[node name="TextureRect" type="TextureRect" parent="Control/GithubRepo"]
+[node name="TextureRect" type="TextureRect" parent="Control/GithubRepo" unique_id=293293931]
 layout_mode = 0
+offset_top = 0.79681396
 offset_right = 50.0
-offset_bottom = 50.0
+offset_bottom = 50.796814
 mouse_filter = 2
 texture = ExtResource("2_nmjra")
 expand_mode = 1

@@ -43,6 +43,7 @@ const ATLAS_MAX_PIXELS := 268435456
 @onready var n_frames_spin: SpinBox = $Control.get_node_or_null("NFrames")
 @onready var atlas_mode_check: CheckBox = $Control.get_node_or_null("AtlasModeCheck")
 @onready var atlas_error_dialog: AcceptDialog = $Control.get_node_or_null("AtlasErrorDialog")
+@onready var language_selector = $Control/LanguageSelector
 
 
 # ---------- RENDER ----------
@@ -65,6 +66,9 @@ var _web_import_callback_ref: JavaScriptObject
 
 
 # ---------- READY ----------
+# Description: Initializes the UI, connects signals and loads the default model.
+# Args: none
+# Returns: void
 func _ready():
 	if capture_button.pressed.is_connected(_on_button_pressed):
 		capture_button.pressed.disconnect(_on_button_pressed)
@@ -127,6 +131,9 @@ func _ready():
 
 
 # ---------- BOTÓN ----------
+# Description: Handles capture button press and launches 360° capture.
+# Args: none
+# Returns: void
 func _on_button_pressed():
 	print("Iniciando captura 360°...")
 
@@ -148,6 +155,9 @@ func _on_button_pressed():
 	await capture_360()
 
 
+# Description: Validates that atlas mode does not exceed pixel limit.
+# Args: none
+# Returns: bool — true if atlas is valid or disabled, false if disabled due to size.
 func _validate_atlas_mode_limits() -> bool:
 	if atlas_mode_check == null or not atlas_mode_check.button_pressed:
 		return true
@@ -167,14 +177,33 @@ func _validate_atlas_mode_limits() -> bool:
 		return true
 
 	atlas_mode_check.button_pressed = false
-	var message := "Atlas mode desactivado: la imagen resultante sería demasiado grande.\n\n"
-	message += "Tamaño calculado: %dx%d (%d píxeles).\n" % [atlas_width, atlas_height, atlas_pixels]
-	message += "Límite permitido: %d píxeles.\n\n" % ATLAS_MAX_PIXELS
-	message += "Reduce Render Width, N Views o N Frames, o vuelve a renderizar sin Atlas Mode."
+	var message := _build_atlas_error_message(atlas_width, atlas_height, atlas_pixels)
 	_show_atlas_error(message)
 	return false
 
 
+func _build_atlas_error_message(atlas_width: int, atlas_height: int, atlas_pixels: int) -> String:
+	var disabled_prefix := "Atlas mode disabled: the resulting image would be too large."
+	var calculated_size := "Calculated size"
+	var allowed_limit := "Allowed limit"
+	var reduce_instruction := "Reduce Render Width, N Views or N Frames, or re-render without Atlas Mode."
+
+	if language_selector != null:
+		disabled_prefix = language_selector.get_text("atlas_disabled_prefix")
+		calculated_size = language_selector.get_text("atlas_calculated_size")
+		allowed_limit = language_selector.get_text("atlas_allowed_limit")
+		reduce_instruction = language_selector.get_text("atlas_reduce_instruction")
+
+	var message := "%s\n\n" % disabled_prefix
+	message += "%s: %dx%d (%d pixels).\n" % [calculated_size, atlas_width, atlas_height, atlas_pixels]
+	message += "%s: %d pixels.\n\n" % [allowed_limit, ATLAS_MAX_PIXELS]
+	message += reduce_instruction
+	return message
+
+
+# Description: Displays an error dialog related to atlas mode.
+# Args: message (String) — error text to display
+# Returns: void
 func _show_atlas_error(message: String) -> void:
 	if atlas_error_dialog != null:
 		atlas_error_dialog.dialog_text = message
@@ -183,6 +212,9 @@ func _show_atlas_error(message: String) -> void:
 		push_error(message)
 
 # ---------- CARPETA ----------
+# Description: Ensures the capture destination folder exists (not on web).
+# Args: none
+# Returns: void
 func ensure_capture_folder():
 	if OS.has_feature("web"):
 		return
@@ -198,6 +230,9 @@ func ensure_capture_folder():
 	if not dir.dir_exists(folder_name):
 		dir.make_dir(folder_name)
 
+# Description: Clears all files within the capture folder (not on web).
+# Args: none
+# Returns: void
 func clear_capture_folder():
 	if OS.has_feature("web"):
 		return
@@ -215,6 +250,9 @@ func clear_capture_folder():
 	dir.list_dir_end()
 
 # ---------- FUNCIONES ANIMACION ----------
+# Description: Updates frame count UI based on whether animations exist.
+# Args: none
+# Returns: void
 func _update_nframes_ui() -> void:
 	if not n_frames_spin:
 		return
@@ -229,6 +267,9 @@ func _update_nframes_ui() -> void:
 		n_frames_spin.max_value = 1 # Máximo 1 si no hay animación
 		n_frames_spin.value = 1
 
+# Description: Recursively searches for an AnimationPlayer within a node.
+# Args: node (Node) — root node to search in
+# Returns: AnimationPlayer or null if not found
 func _find_animation_player(node: Node) -> AnimationPlayer:
 	if node is AnimationPlayer:
 		return node
@@ -239,6 +280,9 @@ func _find_animation_player(node: Node) -> AnimationPlayer:
 	return null
 
 # ---------- CAPTURA ----------
+# Description: Performs 360° capture (optionally in atlas mode or with animation).
+# Args: none
+# Returns: void
 func capture_360() -> void:
 	ensure_capture_folder()
 	clear_capture_folder()
@@ -332,6 +376,10 @@ func capture_360() -> void:
 		_web_capture_buffers.clear()
 
 # ---------- GUARDAR ----------
+# Description: Saves an image to disk or downloads on web based on selected format.
+# Args: image (Image) — image to save
+#       base_path (String) — path/base for file without extension
+# Returns: void
 func save_image(image: Image, base_path: String):
 	if OS.has_feature("web"):
 		var file_name := base_path.get_file()
@@ -361,6 +409,9 @@ func save_image(image: Image, base_path: String):
 			save_xpm_argb(image, base_path + ".xpm")
 
 
+# Description: Prepares/converts image according to format (e.g., RGB for JPG).
+# Args: source_image (Image) — original image
+# Returns: Image — converted image ready for saving
 func _prepare_image_for_format(source_image: Image) -> Image:
 	var image := source_image.duplicate()
 	if image_format == ImageFormat.JPG:
@@ -368,6 +419,10 @@ func _prepare_image_for_format(source_image: Image) -> Image:
 	return image
 
 
+# Description: Generates a buffer (PackedByteArray) ready for web download by format.
+# Args: image (Image) — image to convert
+#       _name_without_ext (String) — base name (not directly used here)
+# Returns: PackedByteArray — buffer with image file bytes
 func save_image_web_buffer(image: Image, _name_without_ext: String) -> PackedByteArray:
 	if image_format == ImageFormat.PNG:
 		return image.save_png_to_buffer()
@@ -383,6 +438,9 @@ func save_image_web_buffer(image: Image, _name_without_ext: String) -> PackedByt
 	return PackedByteArray()
 
 
+# Description: Converts an integer to a 16-bit little-endian PackedByteArray.
+# Args: val (int) — value to convert
+# Returns: PackedByteArray — bytes in little-endian order
 func _u16_le(val: int) -> PackedByteArray:
 	var a := PackedByteArray()
 	var u := val & 0xFFFF
@@ -391,6 +449,9 @@ func _u16_le(val: int) -> PackedByteArray:
 	return a
 
 
+# Description: Converts an integer to a 32-bit little-endian PackedByteArray.
+# Args: val (int) — value to convert
+# Returns: PackedByteArray — bytes in little-endian order
 func _u32_le(val: int) -> PackedByteArray:
 	var a := PackedByteArray()
 	var u := val & 0xFFFFFFFF
@@ -401,11 +462,18 @@ func _u32_le(val: int) -> PackedByteArray:
 	return a
 
 
+# Description: Appends bytes from `src` to the end of `dest` (in-place).
+# Args: dest (PackedByteArray) — destination to append bytes to
+#       src (PackedByteArray) — source bytes to append
+# Returns: void
 func _append_pba(dest: PackedByteArray, src: PackedByteArray) -> void:
 	for b in src:
 		dest.append(b)
 
 
+# Description: Calculates CRC32 of a PackedByteArray.
+# Args: data (PackedByteArray) — data to calculate CRC for
+# Returns: int — CRC32 value (32 bits)
 func crc32(data: PackedByteArray) -> int:
 	var table: Array[int] = []
 	# generar tabla localmente cada vez (suficiente para este uso)
@@ -426,6 +494,9 @@ func crc32(data: PackedByteArray) -> int:
 	return crc & 0xFFFFFFFF
 
 
+# Description: Builds a ZIP in memory from an array of files with {name, data}.
+# Args: files (Array) — each element must be {name: String, data: PackedByteArray}
+# Returns: PackedByteArray — resulting ZIP bytes
 func build_zip_from_files(files: Array) -> PackedByteArray:
 	# files: array of {name: String, data: PackedByteArray}
 	var out := PackedByteArray()
@@ -506,6 +577,9 @@ func build_zip_from_files(files: Array) -> PackedByteArray:
 	return out
 
 
+# Description: Generates XPM (RGBA) text from an `Image`.
+# Args: image (Image) — input image
+# Returns: String — XPM text content
 func build_xpm_rgba_text(image: Image) -> String:
 	image.convert(Image.FORMAT_RGBA8)
 	var w := image.get_width()
@@ -559,6 +633,9 @@ func build_xpm_rgba_text(image: Image) -> String:
 	return "\n".join(lines)
 
 
+# Description: Generates XPM (ARGB) text from an `Image`.
+# Args: image (Image) — input image
+# Returns: String — XPM text content
 func build_xpm_argb_text(image: Image) -> String:
 	image.convert(Image.FORMAT_RGBA8)
 	var w := image.get_width()
@@ -613,6 +690,10 @@ func build_xpm_argb_text(image: Image) -> String:
 	return "\n".join(lines)
 
 
+# Description: Returns the XPM code for a given index and character length per pixel.
+# Args: index (int) — color index in palette
+#       chars_per_pixel (int) — number of characters per pixel
+# Returns: String — string representing the XPM code for that index
 func xpm_code(index: int, chars_per_pixel: int) -> String:
 	var base := XPM_CHARS.length()
 	var code := ""
@@ -623,6 +704,10 @@ func xpm_code(index: int, chars_per_pixel: int) -> String:
 
 	return code
 
+# Description: Saves an `Image` as XPM (RGB) file to disk.
+# Args: image (Image) — image to save (will be converted to RGB)
+#       path (String) — full destination path
+# Returns: void
 func save_xpm_rgb(image: Image, path: String):
 	image.convert(Image.FORMAT_RGB8)
 	var w: int = image.get_width()
@@ -676,6 +761,10 @@ func save_xpm_rgb(image: Image, path: String):
 	file.store_line("};")
 	file.close()
 
+# Description: Saves an `Image` as XPM (RGBA) file to disk.
+# Args: image (Image) — image to save (will be converted to RGBA)
+#       path (String) — full destination path
+# Returns: void
 func save_xpm_rgba(image: Image, path: String):
 	image.convert(Image.FORMAT_RGBA8)
 	var w := image.get_width()
@@ -735,6 +824,10 @@ func save_xpm_rgba(image: Image, path: String):
 	file.close()
 
 
+# Description: Saves an `Image` as XPM (ARGB) file to disk.
+# Args: image (Image) — image to save (will be converted to RGBA/ARGB)
+#       path (String) — full destination path
+# Returns: void
 func save_xpm_argb(image: Image, path: String):
 	image.convert(Image.FORMAT_RGBA8)
 	var w := image.get_width()
@@ -795,16 +888,25 @@ func save_xpm_argb(image: Image, path: String):
 	file.close()
 
 
+# Description: Handles import button; opens file selector or web picker.
+# Args: none
+# Returns: void
 func _on_import_button_pressed() -> void:
 	if OS.has_feature("web"):
 		_open_web_model_picker()
 		return
 	file_dialog.popup()
 
+# Description: Callback when a file is selected in the FileDialog.
+# Args: path (String) — path to selected file
+# Returns: void
 func _on_file_selected(path: String):
 	load_glb_runtime(path)
 
 
+# Description: Opens browser file picker to select a .glb (web).
+# Args: none
+# Returns: void
 func _open_web_model_picker() -> void:
 	if _web_import_callback_ref == null:
 		_web_import_callback_ref = JavaScriptBridge.create_callback(_on_web_model_file_picked)
@@ -841,6 +943,9 @@ window.__prerenderPickModel = function(done) {
 	window.__prerenderPickModel(_web_import_callback_ref)
 
 
+# Description: Callback from JavaScript when user selects a model on web.
+# Args: args (Array) — [data_url, filename]
+# Returns: void
 func _on_web_model_file_picked(args: Array) -> void:
 	if args.size() < 2:
 		return
@@ -858,6 +963,9 @@ func _on_web_model_file_picked(args: Array) -> void:
 	var raw_data := Marshalls.base64_to_raw(data_url.substr(comma_pos + 1))
 	load_glb_runtime_from_bytes(raw_data, file_name)
 
+# Description: Loads a GLB file from disk and processes it for rendering.
+# Args: path (String) — path to .glb file
+# Returns: void
 func load_glb_runtime(path: String) -> void:
 	var file := FileAccess.open(path, FileAccess.READ)
 	if file == null:
@@ -867,6 +975,10 @@ func load_glb_runtime(path: String) -> void:
 	load_glb_runtime_from_bytes(data, path.get_file())
 
 
+# Description: Loads a GLB from bytes in memory and generates the corresponding scene.
+# Args: data (PackedByteArray) — GLB content
+#       source_name (String) — source name (optional)
+# Returns: void
 func load_glb_runtime_from_bytes(data: PackedByteArray, source_name: String = "") -> void:
 	# Limpia modelos previos
 	for child in render_scene.get_children():
@@ -890,6 +1002,9 @@ func load_glb_runtime_from_bytes(data: PackedByteArray, source_name: String = ""
 
 
 
+# Description: Adds a node to `render_scene`, normalizes and applies scale.
+# Args: scene (Node) — scene generated from GLB
+# Returns: void
 func _add_to_render_scene(scene: Node) -> void:
 	if not scene:
 		return
@@ -908,6 +1023,9 @@ func _add_to_render_scene(scene: Node) -> void:
 	_apply_user_scale()
 	_update_nframes_ui()
 
+# Description: Applies user-defined scale to `current_model`.
+# Args: none
+# Returns: void
 func _apply_user_scale() -> void:
 	if current_model == null:
 		return
@@ -915,10 +1033,16 @@ func _apply_user_scale() -> void:
 	var user_scale: float = float(scale_spin.value)
 	current_model.scale = Vector3.ONE * user_scale
 
+# Description: Callback when scale slider changes; reapplies user scale.
+# Args: _value (float) — new slider value (not directly used)
+# Returns: void
 func _on_scale_changed(_value: float) -> void:
 	_apply_user_scale()
 
 
+# Description: Normalizes position and scale of meshes within node recursively.
+# Args: node (Node) — root node to normalize
+# Returns: void
 func normalize_model_recursive(node: Node) -> void:
 	var user_scale: float = float(scale_spin.value)
 
@@ -936,6 +1060,9 @@ func normalize_model_recursive(node: Node) -> void:
 	for child in node.get_children():
 		normalize_model_recursive(child)
 
+# Description: Updates directional light rotation based on sliders.
+# Args: value (float) — slider value (not directly used)
+# Returns: void
 func _on_light_rotation_changed(value: float) -> void:
 	# Leer valores de los sliders
 	var pitch: float = float(light_pitch_slider.value)  # rotación X
@@ -944,6 +1071,9 @@ func _on_light_rotation_changed(value: float) -> void:
 	# Aplicar rotación a la luz en grados
 	directional_light.rotation_degrees = Vector3(pitch, yaw, 0)
 
+# Description: Applies model rotation based on rotation sliders.
+# Args: value (float) — slider value (not directly used)
+# Returns: void
 func _on_model_rotation_changed(value: float) -> void:
 	if current_model == null:
 		return
@@ -953,6 +1083,9 @@ func _on_model_rotation_changed(value: float) -> void:
 	# Aplicar rotación (Y se mantiene en 0)
 	current_model.rotation_degrees = Vector3(rot_x, 0, rot_z)
 
+# Description: Updates `render_scene` position based on spinners.
+# Args: _value (float) — new value (not directly used)
+# Returns: void
 func _on_render_position_changed(_value: float) -> void:
 	if render_scene == null:
 		return
@@ -961,9 +1094,15 @@ func _on_render_position_changed(_value: float) -> void:
 	var pos_z = float(render_pos_z_spin.value) if render_pos_z_spin else render_scene.position.z
 	render_scene.position = Vector3(pos_x, pos_y, pos_z)
 
+# Description: Adjusts directional light intensity.
+# Args: value (float) — new intensity
+# Returns: void
 func _on_light_intensity_changed(value: float) -> void:
 	directional_light.light_energy = value
 
+# Description: Updates directional light color based on RGB sliders.
+# Args: value (float) — slider value (not directly used)
+# Returns: void
 func _on_light_color_changed(value: float) -> void:
 	var r: float = float(light_r_slider.value) / 255.0
 	var g: float = float(light_g_slider.value) / 255.0
