@@ -1,0 +1,68 @@
+[gd_scene format=3 uid="uid://bfumbinjl1fm5"]
+
+[ext_resource type="Script" uid="uid://ddw7uc5oknej" path="res://Scripts/rotation_sphere_wrapper.gd" id="1_wrap"]
+[ext_resource type="Script" uid="uid://ft7e08yp3rln" path="res://Scripts/rotation_sphere.gd" id="2_sphere"]
+
+[node name="RotationSphere" type="HBoxContainer" unique_id=1838619463]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -52.0
+offset_top = -50.5
+offset_right = 52.0
+offset_bottom = 50.5
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_wrap")
+
+[node name="Controls" type="VBoxContainer" parent="." unique_id=316458846]
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="Row_X" type="HBoxContainer" parent="Controls" unique_id=2000000001]
+layout_mode = 2
+
+[node name="Row_X#Spin_X_text" type="Label" parent="Controls/Row_X" unique_id=1354899954]
+layout_mode = 2
+text = "X"
+
+[node name="Row_X#Spin_X" type="SpinBox" parent="Controls/Row_X" unique_id=394761959]
+layout_mode = 2
+min_value = -360.0
+max_value = 360.0
+step = 0.1
+
+[node name="Row_Y" type="HBoxContainer" parent="Controls" unique_id=2000000002]
+layout_mode = 2
+
+[node name="Row_Y#Spin_Y_text" type="Label" parent="Controls/Row_Y" unique_id=1314224350]
+layout_mode = 2
+text = "Y"
+
+[node name="Row_Y#Spin_Y" type="SpinBox" parent="Controls/Row_Y" unique_id=23540868]
+layout_mode = 2
+min_value = -360.0
+max_value = 360.0
+step = 0.1
+
+[node name="Row_Z" type="HBoxContainer" parent="Controls" unique_id=2000000003]
+layout_mode = 2
+
+[node name="Row_Z#Spin_Z_text" type="Label" parent="Controls/Row_Z" unique_id=1287423771]
+layout_mode = 2
+text = "Z"
+
+[node name="Row_Z#Spin_Z" type="SpinBox" parent="Controls/Row_Z" unique_id=1091481200]
+layout_mode = 2
+min_value = -360.0
+max_value = 360.0
+step = 0.1
+
+[node name="Center" type="CenterContainer" parent="." unique_id=2105508495]
+layout_mode = 2
+
+[node name="SphereCanvas" type="Control" parent="Center" unique_id=2105508494]
+layout_mode = 2
+script = ExtResource("2_sphere")

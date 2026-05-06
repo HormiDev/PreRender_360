@@ -26,11 +26,9 @@ const ATLAS_MAX_PIXELS := 268435456
 @onready var file_prefix_input: LineEdit = $Control/FilePrefixInput
 @onready var capture_button: Button = $Control/Button
 @onready var scale_spin: SpinBox = $Control/ScaleSpin
-@onready var light_pitch_slider: HSlider = $Control/LightPitchSlider
-@onready var light_yaw_slider: HSlider = $Control/LightYawSlider
 @onready var directional_light: DirectionalLight3D = $SubViewport/DirectionalLight3D
-@onready var model_rot_x_slider: HSlider = $Control/ModelRotXSlider
-@onready var model_rot_z_slider: HSlider = $Control/ModelRotZSlider
+@onready var model_rotation_control = $Control/ModelRotationSphere
+@onready var light_rotation_control = $Control/LightRotationSphere
 @onready var light_intensity_slider: HSlider = $Control/LightIntensitySlider
 @onready var import_button: Button = $Control/ImportButton
 @onready var file_dialog: FileDialog = $Control/FileDialog
@@ -49,6 +47,7 @@ const ATLAS_MAX_PIXELS := 268435456
 # ---------- RENDER ----------
 @onready var viewport: SubViewport = $SubViewport
 @onready var render_scene: Node3D = $SubViewport/RenderScene
+@onready var render_camera: Camera3D = $SubViewport/RenderCamera3D
 
 # ---------- VARIABLES ----------
 @export var render_width := 512
@@ -59,6 +58,12 @@ const ATLAS_MAX_PIXELS := 268435456
 var image_format: int = ImageFormat.PNG
 var current_model: Node = null
 var file_prefix := "capture_angle_"
+var model_rotation_pitch := 0.0
+var model_rotation_yaw := 0.0
+var model_rotation_roll := 0.0
+var light_rotation_pitch := 0.0
+var light_rotation_yaw := 0.0
+var light_rotation_roll := 0.0
 
 # Buffers temporales para export web
 var _web_capture_buffers := []
@@ -91,11 +96,15 @@ func _ready():
 	# Rescalado
 	scale_spin.value_changed.connect(_on_scale_changed)
 	# Rotacion de la luz
-	light_pitch_slider.value_changed.connect(_on_light_rotation_changed)
-	light_yaw_slider.value_changed.connect(_on_light_rotation_changed)
+	if light_rotation_control != null:
+		if light_rotation_control.has_signal("rotation_changed"):
+			light_rotation_control.rotation_changed.connect(_on_light_rotation_changed)
 	# Rotacion del modelo
-	model_rot_x_slider.value_changed.connect(_on_model_rotation_changed)
-	model_rot_z_slider.value_changed.connect(_on_model_rotation_changed)
+	if model_rotation_control != null:
+		if model_rotation_control.has_signal("rotation_delta"):
+			model_rotation_control.rotation_delta.connect(_on_model_rotation_delta)
+		elif model_rotation_control.has_signal("rotation_changed"):
+			model_rotation_control.rotation_changed.connect(_on_model_rotation_changed)
 	
 	# Posición del RenderScene
 	if render_pos_x_spin:
@@ -120,6 +129,7 @@ func _ready():
 		# Normalizar y aplicar escala inicial
 		normalize_model_recursive(scene)
 		_apply_user_scale()
+		_apply_model_rotation()
 		_update_nframes_ui()
 	
 		# Color RGB de la luz
@@ -128,6 +138,10 @@ func _ready():
 	light_b_slider.value_changed.connect(_on_light_color_changed)
 	# Aplicar color inicial
 	_on_light_color_changed(0)
+
+	# Enable _process to keep UI in sync with model (idle animations, external changes)
+	set_process(true)
+
 
 
 # ---------- BOTÓN ----------
@@ -1021,6 +1035,7 @@ func _add_to_render_scene(scene: Node) -> void:
 
 	# Aplicar la escala inicial del usuario
 	_apply_user_scale()
+	_apply_model_rotation()
 	_update_nframes_ui()
 
 # Description: Applies user-defined scale to `current_model`.
@@ -1063,25 +1078,88 @@ func normalize_model_recursive(node: Node) -> void:
 # Description: Updates directional light rotation based on sliders.
 # Args: value (float) — slider value (not directly used)
 # Returns: void
-func _on_light_rotation_changed(value: float) -> void:
-	# Leer valores de los sliders
-	var pitch: float = float(light_pitch_slider.value)  # rotación X
-	var yaw: float = float(light_yaw_slider.value)      # rotación Y
+func _on_light_rotation_changed(pitch_degrees: float, yaw_degrees: float, roll_degrees: float) -> void:
+	light_rotation_pitch = pitch_degrees
+	light_rotation_yaw = wrapf(yaw_degrees, -180.0, 180.0)
+	light_rotation_roll = wrapf(roll_degrees, -180.0, 180.0)
+	_apply_light_rotation()
 
-	# Aplicar rotación a la luz en grados
-	directional_light.rotation_degrees = Vector3(pitch, yaw, 0)
-
-# Description: Applies model rotation based on rotation sliders.
-# Args: value (float) — slider value (not directly used)
+# Description: Applies model rotation based on the sphere control.
+# Args: pitch_degrees (float), yaw_degrees (float)
 # Returns: void
-func _on_model_rotation_changed(value: float) -> void:
+func _on_model_rotation_changed(pitch_degrees: float, yaw_degrees: float, roll_degrees: float) -> void:
+	# backward-compatible absolute setter
+	model_rotation_pitch = pitch_degrees
+	model_rotation_yaw = wrapf(yaw_degrees, -180.0, 180.0)
+	model_rotation_roll = wrapf(roll_degrees, -180.0, 180.0)
+	_apply_model_rotation()
+
+
+func _on_model_rotation_delta(pitch_delta: float, yaw_delta: float, roll_delta: float) -> void:
 	if current_model == null:
 		return
-	# Leer sliders
-	var rot_x = float(model_rot_x_slider.value)  # arriba-abajo
-	var rot_z = float(model_rot_z_slider.value)  # eje Z
-	# Aplicar rotación (Y se mantiene en 0)
-	current_model.rotation_degrees = Vector3(rot_x, 0, rot_z)
+	# Prefer rotating around camera axes so drag feels relative to view
+	if render_camera != null:
+		var cam_basis: Basis = render_camera.global_transform.basis
+		var right: Vector3 = cam_basis.x.normalized()
+		var up: Vector3 = cam_basis.y.normalized()
+		var forward: Vector3 = -cam_basis.z.normalized()
+
+		var b_pitch: Basis = Basis(right, deg_to_rad(pitch_delta))
+		var b_yaw: Basis = Basis(up, deg_to_rad(yaw_delta))
+		var b_roll: Basis = Basis(forward, deg_to_rad(roll_delta))
+
+		var b: Basis = b_yaw * b_pitch * b_roll
+
+		var gt: Transform3D = current_model.global_transform
+		gt.basis = (b * gt.basis).orthonormalized()
+		current_model.global_transform = gt
+	else:
+		# Fallback: rotate in local axes
+		if pitch_delta != 0.0:
+			current_model.rotate_x(deg_to_rad(pitch_delta))
+		if yaw_delta != 0.0:
+			current_model.rotate_y(deg_to_rad(yaw_delta))
+		if roll_delta != 0.0:
+			current_model.rotate_z(deg_to_rad(roll_delta))
+
+	# Sync stored Euler values with actual model rotation (for UI/state)
+	var r_deg: Vector3 = current_model.rotation_degrees
+	model_rotation_pitch = r_deg.x
+	model_rotation_yaw = r_deg.y
+	model_rotation_roll = r_deg.z
+
+
+# Description: Applies the current model rotation to the active model.
+# Args: none
+# Returns: void
+func _apply_model_rotation() -> void:
+	if current_model == null:
+		return
+	current_model.rotation_degrees = Vector3(model_rotation_pitch, model_rotation_yaw, model_rotation_roll)
+
+func _apply_light_rotation() -> void:
+	directional_light.rotation_degrees = Vector3(light_rotation_pitch, light_rotation_yaw, light_rotation_roll)
+
+
+# This ensures any animations or external transforms are reflected in the sphere control.
+func _process(_delta: float) -> void:
+	if current_model == null or model_rotation_control == null:
+		return
+
+	var model_basis: Basis = current_model.global_transform.basis.orthonormalized()
+
+	# Update stored state for compatibility with existing code paths.
+	var r_deg: Vector3 = model_basis.get_euler()
+	model_rotation_pitch = rad_to_deg(r_deg.x)
+	model_rotation_yaw = rad_to_deg(r_deg.y)
+	model_rotation_roll = rad_to_deg(r_deg.z)
+
+	# Push the actual basis so the sphere does not snap through Euler singularities.
+	if model_rotation_control.has_method("set_sphere_basis"):
+		model_rotation_control.set_sphere_basis(model_basis)
+	elif model_rotation_control.has_method("set_sphere_rotation"):
+		model_rotation_control.set_sphere_rotation(model_rotation_pitch, model_rotation_yaw, model_rotation_roll)
 
 # Description: Updates `render_scene` position based on spinners.
 # Args: _value (float) — new value (not directly used)

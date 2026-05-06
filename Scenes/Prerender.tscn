@@ -5,6 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://d2w2mdyfh1s0a" path="res://logo_github.svg" id="2_nmjra"]
 [ext_resource type="Script" uid="uid://b7tai1raj74a0" path="res://Scripts/github_button.gd" id="3_8jw8o"]
 [ext_resource type="Script" uid="uid://ckgrl6sgpptqo" path="res://Scripts/language_selector.gd" id="4_lang1"]
+[ext_resource type="PackedScene" uid="uid://bfumbinjl1fm5" path="res://Scenes/RotationSphere.tscn" id="5_rotsp_scene"]
 
 [node name="Prerender" type="Node3D" unique_id=2021081997]
 script = ExtResource("1_nmjra")
@@ -246,59 +247,49 @@ value = 1.0
 
 [node name="LigthRotaton_text" type="Label" parent="Control" unique_id=1121088066]
 layout_mode = 0
-offset_left = 1709.0
-offset_top = 50.0
-offset_right = 1873.0
-offset_bottom = 78.0
+offset_left = 1602.0
+offset_top = 35.0
+offset_right = 1796.0
+offset_bottom = 63.0
 text = "Ligth Rotation"
-horizontal_alignment = 1
 
-[node name="LightPitchSlider" type="HSlider" parent="Control" unique_id=1939495429]
+[node name="LightRotationSphere" parent="Control" unique_id=477555314 instance=ExtResource("5_rotsp_scene")]
+custom_minimum_size = Vector2(200, 140)
 layout_mode = 0
-offset_left = 1903.0
-offset_top = 14.0
-offset_right = 2108.0
-offset_bottom = 30.0
-rotation = 1.5708
-min_value = -90.0
-max_value = 90.0
-
-[node name="LightYawSlider" type="HSlider" parent="Control" unique_id=298416267]
-layout_mode = 0
-offset_left = 1681.0
-offset_top = 108.0
-offset_right = 1886.0
-offset_bottom = 124.0
-min_value = -180.0
-max_value = 180.0
+anchors_preset = 0
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 1602.0
+offset_top = 47.0
+offset_right = 1910.0
+offset_bottom = 187.0
+grow_horizontal = 1
+grow_vertical = 1
 
 [node name="ModelRotaton_text" type="Label" parent="Control" unique_id=1488295052]
 layout_mode = 0
-offset_left = 41.0
-offset_top = 218.0
-offset_right = 218.0
-offset_bottom = 246.0
+offset_left = 31.0
+offset_top = 199.0
+offset_right = 208.0
+offset_bottom = 227.0
 text = "Model Rotation"
-horizontal_alignment = 1
 
-[node name="ModelRotXSlider" type="HSlider" parent="Control" unique_id=476555313]
+[node name="ModelRotationSphere" parent="Control" unique_id=476555313 instance=ExtResource("5_rotsp_scene")]
+custom_minimum_size = Vector2(200, 140)
 layout_mode = 0
-offset_left = 248.0
-offset_top = 182.0
-offset_right = 453.0
-offset_bottom = 198.0
-rotation = 1.5708
-min_value = -90.0
-max_value = 90.0
-
-[node name="ModelRotZSlider" type="HSlider" parent="Control" unique_id=1350647328]
-layout_mode = 0
+anchors_preset = 0
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
 offset_left = 26.0
-offset_top = 276.0
-offset_right = 231.0
-offset_bottom = 292.0
-min_value = -180.0
-max_value = 180.0
+offset_top = 208.0
+offset_right = 334.0
+offset_bottom = 348.0
+grow_horizontal = 1
+grow_vertical = 1
 
 [node name="Ligthintensity_text" type="Label" parent="Control" unique_id=1644557535]
 layout_mode = 0
@@ -369,51 +360,51 @@ placeholder_text = "Save Name"
 [node name="XPosition_text" type="Label" parent="Control" unique_id=1244129325]
 layout_mode = 0
 offset_left = 27.0
-offset_top = 405.0
+offset_top = 412.0
 offset_right = 138.0
-offset_bottom = 433.0
+offset_bottom = 440.0
 text = "X Position"
 
 [node name="RenderPosXSpin" type="SpinBox" parent="Control" unique_id=577724354]
 layout_mode = 0
 offset_left = 188.0
-offset_top = 403.0
+offset_top = 410.0
 offset_right = 274.563
-offset_bottom = 434.0
+offset_bottom = 441.0
 min_value = -100.0
 step = 0.01
 
 [node name="YPosition_text" type="Label" parent="Control" unique_id=104684558]
 layout_mode = 0
 offset_left = 27.0
-offset_top = 445.0
+offset_top = 452.0
 offset_right = 138.0
-offset_bottom = 473.0
+offset_bottom = 480.0
 text = "Y Position"
 
 [node name="RenderPosYSpin" type="SpinBox" parent="Control" unique_id=1234646578]
 layout_mode = 0
 offset_left = 188.0
-offset_top = 443.0
+offset_top = 450.0
 offset_right = 274.563
-offset_bottom = 474.0
+offset_bottom = 481.0
 min_value = -100.0
 step = 0.01
 
 [node name="ZPosition_text" type="Label" parent="Control" unique_id=890006659]
 layout_mode = 0
 offset_left = 27.0
-offset_top = 485.0
+offset_top = 492.0
 offset_right = 138.0
-offset_bottom = 513.0
+offset_bottom = 520.0
 text = "Z Position"
 
 [node name="RenderPosZSpin" type="SpinBox" parent="Control" unique_id=132296953]
 layout_mode = 0
 offset_left = 188.0
-offset_top = 483.0
+offset_top = 490.0
 offset_right = 274.563
-offset_bottom = 514.0
+offset_bottom = 521.0
 min_value = -100.0
 step = 0.01
 
