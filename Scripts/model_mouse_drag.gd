@@ -8,6 +8,7 @@ signal scale_step_requested(step_delta: float)
 @export var interaction_camera_path: NodePath
 @export var max_pick_distance: float = 1000.0
 @export var scroll_scale_step: float = 0.01
+@export var scroll_z_step: float = 0.01
 
 const _PICK_COLLISION_LAYER_VALUE: int = 1 << 19
 
@@ -66,9 +67,15 @@ func _input(event: InputEvent) -> void:
 			_end_drag()
 	elif event is InputEventMouseButton and event.pressed:
 		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
-			_try_scroll_scale(event.position, 1.0)
+			if _is_dragging:
+				_scroll_z(1.0)
+			else:
+				_try_scroll_scale(event.position, 1.0)
 		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
-			_try_scroll_scale(event.position, -1.0)
+			if _is_dragging:
+				_scroll_z(-1.0)
+			else:
+				_try_scroll_scale(event.position, -1.0)
 	elif event is InputEventMouseMotion and _is_dragging:
 		_update_drag(event.position)
 
@@ -128,6 +135,19 @@ func _end_drag() -> void:
 
 
 # ---------- SCALE ----------
+# Description: Moves the dragged object along the Z axis based on scroll_z_step when scrolling while holding the left mouse button.
+# Args: direction (float) — step multiplier, positive or negative (+1.0 or -1.0)
+# Returns: void
+func _scroll_z(direction: float) -> void:
+	if _drag_target == null:
+		return
+	
+	var step_amount = scroll_z_step * direction
+	_drag_target.global_position.z += step_amount
+	_drag_start_target_position.z += step_amount
+	drag_target_moved.emit(_drag_target.global_position)
+
+
 # Description: Emits a scale request when the mouse wheel is used over the model.
 # Args: mouse_position (Vector2) — screen-space mouse position
 #       direction (float) — scale step multiplier, positive or negative
