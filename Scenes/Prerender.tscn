@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://ckgrl6sgpptqo" path="res://Scripts/language_selector.gd" id="4_lang1"]
 [ext_resource type="PackedScene" uid="uid://bfumbinjl1fm5" path="res://Scenes/RotationSphere.tscn" id="5_rotsp_scene"]
 [ext_resource type="Script" path="res://Scripts/model_mouse_drag.gd" id="6_mdrag"]
+[ext_resource type="Script" path="res://Scripts/resettable_spinbox.gd" id="7_reset_spin"]
 
 [node name="Prerender" type="Node3D" unique_id=2021081997]
 script = ExtResource("1_nmjra")
@@ -78,6 +79,7 @@ offset_right = 233.563
 offset_bottom = 829.0
 max_value = 10000.0
 value = 512.0
+script = ExtResource("7_reset_spin")
 metadata/_edit_use_anchors_ = true
 
 [node name="RenderHeigth_text" type="Label" parent="Control" unique_id=108730869]
@@ -103,6 +105,7 @@ offset_right = 233.563
 offset_bottom = 867.0
 max_value = 10000.0
 value = 512.0
+script = ExtResource("7_reset_spin")
 metadata/_edit_use_anchors_ = true
 
 [node name="NFrames_text" type="Label" parent="Control" unique_id=805182149]
@@ -133,6 +136,7 @@ offset_bottom = 1785.0
 min_value = 1.0
 max_value = 999.0
 value = 1.0
+script = ExtResource("7_reset_spin")
 metadata/_edit_use_anchors_ = true
 
 [node name="NViews_text" type="Label" parent="Control" unique_id=1597126381]
@@ -158,6 +162,7 @@ offset_right = 233.563
 offset_bottom = 908.0
 max_value = 3600.0
 value = 36.0
+script = ExtResource("7_reset_spin")
 metadata/_edit_use_anchors_ = true
 
 [node name="ImageFormat_text" type="Label" parent="Control" unique_id=40037047]
@@ -251,6 +256,7 @@ min_value = 0.1
 max_value = 10.0
 step = 0.01
 value = 1.0
+script = ExtResource("7_reset_spin")
 
 [node name="LigthRotaton_text" type="Label" parent="Control" unique_id=1121088066]
 layout_mode = 0
@@ -380,6 +386,7 @@ offset_right = 274.563
 offset_bottom = 441.0
 min_value = -100.0
 step = 0.01
+script = ExtResource("7_reset_spin")
 
 [node name="YPosition_text" type="Label" parent="Control" unique_id=104684558]
 layout_mode = 0
@@ -397,6 +404,7 @@ offset_right = 274.563
 offset_bottom = 481.0
 min_value = -100.0
 step = 0.01
+script = ExtResource("7_reset_spin")
 
 [node name="ZPosition_text" type="Label" parent="Control" unique_id=890006659]
 layout_mode = 0
@@ -414,6 +422,7 @@ offset_right = 274.563
 offset_bottom = 521.0
 min_value = -100.0
 step = 0.01
+script = ExtResource("7_reset_spin")
 
 [node name="GithubRepo" type="LinkButton" parent="Control" unique_id=51565436]
 custom_minimum_size = Vector2(50, 50)

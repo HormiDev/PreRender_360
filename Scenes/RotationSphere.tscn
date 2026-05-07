@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://ddw7uc5oknej" path="res://Scripts/rotation_sphere_wrapper.gd" id="1_wrap"]
 [ext_resource type="Script" uid="uid://ft7e08yp3rln" path="res://Scripts/rotation_sphere.gd" id="2_sphere"]
+[ext_resource type="Script" path="res://Scripts/resettable_spinbox.gd" id="3_reset_spin"]
 
 [node name="RotationSphere" type="HBoxContainer" unique_id=1838619463]
 anchors_preset = 8
@@ -33,6 +34,7 @@ layout_mode = 2
 min_value = -360.0
 max_value = 360.0
 step = 0.1
+script = ExtResource("3_reset_spin")
 
 [node name="Row_Y" type="HBoxContainer" parent="Controls" unique_id=2000000002]
 layout_mode = 2
@@ -46,6 +48,7 @@ layout_mode = 2
 min_value = -360.0
 max_value = 360.0
 step = 0.1
+script = ExtResource("3_reset_spin")
 
 [node name="Row_Z" type="HBoxContainer" parent="Controls" unique_id=2000000003]
 layout_mode = 2
@@ -59,6 +62,7 @@ layout_mode = 2
 min_value = -360.0
 max_value = 360.0
 step = 0.1
+script = ExtResource("3_reset_spin")
 
 [node name="Center" type="CenterContainer" parent="." unique_id=2105508495]
 layout_mode = 2

@@ -42,7 +42,8 @@ const UI_TEXTS := {
 		"atlas_disabled_prefix": "Atlas mode disabled: the resulting image would be too large.",
 		"atlas_calculated_size": "Calculated size",
 		"atlas_allowed_limit": "Allowed limit",
-		"atlas_reduce_instruction": "Reduce Render Width, N Views or N Frames, or re-render without Atlas Mode."
+		"atlas_reduce_instruction": "Reduce Render Width, N Views or N Frames, or re-render without Atlas Mode.",
+		"reset_button_tooltip": "Reset to original value"
 	},
 	"es": {
 		"language_label": "Idioma",
@@ -69,7 +70,8 @@ const UI_TEXTS := {
 		"atlas_disabled_prefix": "El modo atlas se ha desactivado porque la imagen resultante sería demasiado grande.",
 		"atlas_calculated_size": "Tamaño calculado",
 		"atlas_allowed_limit": "Límite permitido",
-		"atlas_reduce_instruction": "Reduce el ancho de render, el número de vistas o el número de frames, o vuelve a renderizar sin modo atlas."
+		"atlas_reduce_instruction": "Reduce el ancho de render, el número de vistas o el número de frames, o vuelve a renderizar sin modo atlas.",
+		"reset_button_tooltip": "Restablecer al valor original"
 	},
 	"fr": {
 		"language_label": "Langue",
@@ -96,7 +98,8 @@ const UI_TEXTS := {
 		"atlas_disabled_prefix": "Le mode atlas a été désactivé car l'image résultante serait trop grande.",
 		"atlas_calculated_size": "Taille calculée",
 		"atlas_allowed_limit": "Limite autorisée",
-		"atlas_reduce_instruction": "Réduisez la largeur de rendu, le nombre de vues ou le nombre de frames, ou relancez le rendu sans le mode atlas."
+		"atlas_reduce_instruction": "Réduisez la largeur de rendu, le nombre de vues ou le nombre de frames, ou relancez le rendu sans le mode atlas.",
+		"reset_button_tooltip": "Réinitialiser à la valeur d'origine"
 	},
 	"zh": {
 		"language_label": "语言",
@@ -123,7 +126,8 @@ const UI_TEXTS := {
 		"atlas_disabled_prefix": "图集模式已禁用：生成的图像将会过大。",
 		"atlas_calculated_size": "计算尺寸",
 		"atlas_allowed_limit": "允许上限",
-		"atlas_reduce_instruction": "请减小渲染宽度、视图数或帧数，或在不使用图集模式下重新渲染。"
+		"atlas_reduce_instruction": "请减小渲染宽度、视图数或帧数，或在不使用图集模式下重新渲染。",
+		"reset_button_tooltip": "重置为原始值"
 	},
 	"hi": {
 		"language_label": "भाषा",
@@ -150,7 +154,8 @@ const UI_TEXTS := {
 		"atlas_disabled_prefix": "एटलस मोड बंद किया गया: परिणामस्वरूप छवि बहुत बड़ी होगी।",
 		"atlas_calculated_size": "गणना किया गया आकार",
 		"atlas_allowed_limit": "अनुमत सीमा",
-		"atlas_reduce_instruction": "रेंडर चौड़ाई, व्यू संख्या या फ्रेम संख्या कम करें, या एटलस मोड के बिना फिर से रेंडर करें।"
+		"atlas_reduce_instruction": "रेंडर चौड़ाई, व्यू संख्या या फ्रेम संख्या कम करें, या एटलस मोड के बिना फिर से रेंडर करें।",
+		"reset_button_tooltip": "मूल मान पर रीसेट करें"
 	},
 	"de": {
 		"language_label": "Sprache",
@@ -177,7 +182,8 @@ const UI_TEXTS := {
 		"atlas_disabled_prefix": "Atlas-Modus deaktiviert: Das resultierende Bild wäre zu groß.",
 		"atlas_calculated_size": "Berechnete Größe",
 		"atlas_allowed_limit": "Erlaubtes Limit",
-		"atlas_reduce_instruction": "Verringere Render-Breite, Ansichten oder Frames, oder rendere ohne Atlas-Modus erneut."
+		"atlas_reduce_instruction": "Verringere Render-Breite, Ansichten oder Frames, oder rendere ohne Atlas-Modus erneut.",
+		"reset_button_tooltip": "Auf den ursprünglichen Wert zurücksetzen"
 	},
 	"ja": {
 		"language_label": "言語",
@@ -204,7 +210,8 @@ const UI_TEXTS := {
 		"atlas_disabled_prefix": "アトラスモードは無効化されました。生成される画像サイズが大きすぎます。",
 		"atlas_calculated_size": "計算サイズ",
 		"atlas_allowed_limit": "許容上限",
-		"atlas_reduce_instruction": "レンダー幅、ビュー数、またはフレーム数を減らすか、アトラスモードなしで再レンダーしてください。"
+		"atlas_reduce_instruction": "レンダー幅、ビュー数、またはフレーム数を減らすか、アトラスモードなしで再レンダーしてください。",
+		"reset_button_tooltip": "元の値に戻す"
 	},
 	"pt": {
 		"language_label": "Idioma",
@@ -231,7 +238,8 @@ const UI_TEXTS := {
 		"atlas_disabled_prefix": "Modo atlas desativado: a imagem resultante seria muito grande.",
 		"atlas_calculated_size": "Tamanho calculado",
 		"atlas_allowed_limit": "Limite permitido",
-		"atlas_reduce_instruction": "Reduza a largura de render, o número de vistas ou frames, ou renderize novamente sem o modo atlas."
+		"atlas_reduce_instruction": "Reduza a largura de render, o número de vistas ou frames, ou renderize novamente sem o modo atlas.",
+		"reset_button_tooltip": "Redefinir para o valor original"
 	},
 	"it": {
 		"language_label": "Lingua",
@@ -258,7 +266,8 @@ const UI_TEXTS := {
 		"atlas_disabled_prefix": "Modalità atlas disattivata: l'immagine risultante sarebbe troppo grande.",
 		"atlas_calculated_size": "Dimensione calcolata",
 		"atlas_allowed_limit": "Limite consentito",
-		"atlas_reduce_instruction": "Riduci la larghezza di render, il numero di viste o di frame, oppure renderizza di nuovo senza modalità atlas."
+		"atlas_reduce_instruction": "Riduci la larghezza di render, il numero di viste o di frame, oppure renderizza di nuovo senza modalità atlas.",
+		"reset_button_tooltip": "Ripristina al valore originale"
 	},
 	"ru": {
 		"language_label": "Язык",
@@ -285,7 +294,8 @@ const UI_TEXTS := {
 		"atlas_disabled_prefix": "Режим атласа отключен: итоговое изображение будет слишком большим.",
 		"atlas_calculated_size": "Рассчитанный размер",
 		"atlas_allowed_limit": "Допустимый предел",
-		"atlas_reduce_instruction": "Уменьшите ширину рендера, количество видов или кадров, либо выполните рендер без режима атласа."
+		"atlas_reduce_instruction": "Уменьшите ширину рендера, количество видов или кадров, либо выполните рендер без режима атласа.",
+		"reset_button_tooltip": "Сбросить к исходному значению"
 	},
 	"uk": {
 		"language_label": "Мова",
@@ -312,7 +322,8 @@ const UI_TEXTS := {
 		"atlas_disabled_prefix": "Режим атласу вимкнено: підсумкове зображення буде занадто великим.",
 		"atlas_calculated_size": "Розрахований розмір",
 		"atlas_allowed_limit": "Дозволена межа",
-		"atlas_reduce_instruction": "Зменште ширину рендеру, кількість ракурсів або кадрів, або перерендерте без режиму атласу."
+		"atlas_reduce_instruction": "Зменште ширину рендеру, кількість ракурсів або кадрів, або перерендерте без режиму атласу.",
+		"reset_button_tooltip": "Скинути до початкового значення"
 	},
 	"ar": {
 		"language_label": "اللغة",
@@ -339,7 +350,8 @@ const UI_TEXTS := {
 		"atlas_disabled_prefix": "تم تعطيل وضع الأطلس: الصورة الناتجة ستكون كبيرة جدا.",
 		"atlas_calculated_size": "الحجم المحسوب",
 		"atlas_allowed_limit": "الحد المسموح",
-		"atlas_reduce_instruction": "خفّض عرض التصيير أو عدد الزوايا أو عدد الإطارات، أو أعد التصيير بدون وضع الأطلس."
+		"atlas_reduce_instruction": "خفّض عرض التصيير أو عدد الزوايا أو عدد الإطارات، أو أعد التصيير بدون وضع الأطلس.",
+		"reset_button_tooltip": "إعادة الضبط إلى القيمة الأصلية"
 	},
 	"id": {
 		"language_label": "Bahasa",
@@ -366,7 +378,8 @@ const UI_TEXTS := {
 		"atlas_disabled_prefix": "Mode atlas dinonaktifkan: gambar hasil akan terlalu besar.",
 		"atlas_calculated_size": "Ukuran terhitung",
 		"atlas_allowed_limit": "Batas yang diizinkan",
-		"atlas_reduce_instruction": "Kurangi lebar render, jumlah sudut, atau jumlah frame, atau render ulang tanpa mode atlas."
+		"atlas_reduce_instruction": "Kurangi lebar render, jumlah sudut, atau jumlah frame, atau render ulang tanpa mode atlas.",
+		"reset_button_tooltip": "Setel ulang ke nilai asli"
 	},
 }
 
