@@ -43,6 +43,8 @@ const ATLAS_MAX_PIXELS := 268435456
 @onready var atlas_mode_check: CheckBox = $Control.get_node_or_null("AtlasModeCheck")
 @onready var atlas_error_dialog: AcceptDialog = $Control.get_node_or_null("AtlasErrorDialog")
 @onready var language_selector = $Control/LanguageSelector
+@onready var rendering_panel: Panel = $Control.get_node_or_null("RenderingPanel")
+@onready var rendering_label: Label = $Control.get_node_or_null("RenderingPanel/RenderingLabel")
 
 
 # ---------- RENDER ----------
@@ -176,7 +178,9 @@ func _on_button_pressed():
 
 	viewport.size = Vector2i(render_width, render_height)
 
+	_show_rendering_message()
 	await capture_360()
+	_hide_rendering_message()
 
 
 # Description: Validates that atlas mode does not exceed pixel limit.
@@ -1215,3 +1219,26 @@ func _on_light_color_changed(value: float) -> void:
 	var g: float = float(light_g_slider.value) / 255.0
 	var b: float = float(light_b_slider.value) / 255.0
 	directional_light.light_color = Color(r, g, b, 1.0)
+
+# Description: Shows the rendering message panel with the current language text.
+# Args: none
+# Returns: void
+func _show_rendering_message() -> void:
+	if rendering_panel == null or rendering_label == null:
+		return
+	
+	if language_selector != null:
+		rendering_label.text = language_selector.get_text("rendering_message")
+	else:
+		rendering_label.text = "Rendering..."
+	
+	rendering_panel.visible = true
+
+# Description: Hides the rendering message panel.
+# Args: none
+# Returns: void
+func _hide_rendering_message() -> void:
+	if rendering_panel == null:
+		return
+	
+	rendering_panel.visible = false

@@ -6,8 +6,22 @@
 [ext_resource type="Script" uid="uid://b7tai1raj74a0" path="res://Scripts/github_button.gd" id="3_8jw8o"]
 [ext_resource type="Script" uid="uid://ckgrl6sgpptqo" path="res://Scripts/language_selector.gd" id="4_lang1"]
 [ext_resource type="PackedScene" uid="uid://bfumbinjl1fm5" path="res://Scenes/RotationSphere.tscn" id="5_rotsp_scene"]
-[ext_resource type="Script" path="res://Scripts/model_mouse_drag.gd" id="6_mdrag"]
-[ext_resource type="Script" path="res://Scripts/resettable_spinbox.gd" id="7_reset_spin"]
+[ext_resource type="Script" uid="uid://1ir53qhx71lv" path="res://Scripts/model_mouse_drag.gd" id="6_mdrag"]
+[ext_resource type="Script" uid="uid://xw2hlg475s" path="res://Scripts/resettable_spinbox.gd" id="7_reset_spin"]
+
+[sub_resource type="StyleBoxFlat" id="RenderButtonStyle"]
+bg_color = Color(0.16728574, 0.33918113, 0.40073216, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="RenderButtonStyleHover"]
+bg_color = Color(0.26, 0.43, 0.50, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
 
 [node name="Prerender" type="Node3D" unique_id=2021081997]
 script = ExtResource("1_nmjra")
@@ -29,7 +43,7 @@ fov = 45.0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.68983)
 fov = 45.0
 
-[node name="ModelMouseDrag" type="Node" parent="."]
+[node name="ModelMouseDrag" type="Node" parent="." unique_id=236131788]
 script = ExtResource("6_mdrag")
 drag_target_path = NodePath("../SubViewport/RenderScene")
 ui_root_path = NodePath("../Control")
@@ -53,6 +67,9 @@ offset_left = 27.0
 offset_top = 1035.0
 offset_right = 226.0
 offset_bottom = 1066.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_styles/normal = SubResource("RenderButtonStyle")
+theme_override_styles/hover = SubResource("RenderButtonStyleHover")
 text = "Render"
 metadata/_edit_use_anchors_ = true
 
@@ -260,9 +277,9 @@ script = ExtResource("7_reset_spin")
 
 [node name="LigthRotaton_text" type="Label" parent="Control" unique_id=1121088066]
 layout_mode = 0
-offset_left = 1602.0
+offset_left = 1578.0
 offset_top = 35.0
-offset_right = 1796.0
+offset_right = 1772.0
 offset_bottom = 63.0
 text = "Ligth Rotation"
 
@@ -274,9 +291,9 @@ anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
-offset_left = 1602.0
+offset_left = 1578.0
 offset_top = 47.0
-offset_right = 1910.0
+offset_right = 1886.0
 offset_bottom = 187.0
 grow_horizontal = 1
 grow_vertical = 1
@@ -443,5 +460,32 @@ offset_bottom = 50.796814
 mouse_filter = 2
 texture = ExtResource("2_nmjra")
 expand_mode = 1
+
+[node name="RenderingPanel" type="Panel" parent="Control" unique_id=123456789]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = -50.0
+offset_right = 150.0
+offset_bottom = 50.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="RenderingLabel" type="Label" parent="Control/RenderingPanel" unique_id=123456790]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 24
+text = "Rendering..."
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [connection signal="pressed" from="Control/Button" to="." method="_on_button_pressed"]

@@ -43,7 +43,8 @@ const UI_TEXTS := {
 		"atlas_calculated_size": "Calculated size",
 		"atlas_allowed_limit": "Allowed limit",
 		"atlas_reduce_instruction": "Reduce Render Width, N Views or N Frames, or re-render without Atlas Mode.",
-		"reset_button_tooltip": "Reset to original value"
+		"reset_button_tooltip": "Reset to original value",
+		"rendering_message": "Rendering..."
 	},
 	"es": {
 		"language_label": "Idioma",
@@ -71,7 +72,8 @@ const UI_TEXTS := {
 		"atlas_calculated_size": "Tamaño calculado",
 		"atlas_allowed_limit": "Límite permitido",
 		"atlas_reduce_instruction": "Reduce el ancho de render, el número de vistas o el número de frames, o vuelve a renderizar sin modo atlas.",
-		"reset_button_tooltip": "Restablecer al valor original"
+		"reset_button_tooltip": "Restablecer al valor original",
+		"rendering_message": "Renderizando..."
 	},
 	"fr": {
 		"language_label": "Langue",
@@ -99,7 +101,8 @@ const UI_TEXTS := {
 		"atlas_calculated_size": "Taille calculée",
 		"atlas_allowed_limit": "Limite autorisée",
 		"atlas_reduce_instruction": "Réduisez la largeur de rendu, le nombre de vues ou le nombre de frames, ou relancez le rendu sans le mode atlas.",
-		"reset_button_tooltip": "Réinitialiser à la valeur d'origine"
+		"reset_button_tooltip": "Réinitialiser à la valeur d'origine",
+		"rendering_message": "Rendu en cours..."
 	},
 	"zh": {
 		"language_label": "语言",
@@ -127,7 +130,8 @@ const UI_TEXTS := {
 		"atlas_calculated_size": "计算尺寸",
 		"atlas_allowed_limit": "允许上限",
 		"atlas_reduce_instruction": "请减小渲染宽度、视图数或帧数，或在不使用图集模式下重新渲染。",
-		"reset_button_tooltip": "重置为原始值"
+		"reset_button_tooltip": "重置为原始值",
+		"rendering_message": "正在渲染..."
 	},
 	"hi": {
 		"language_label": "भाषा",
@@ -155,7 +159,8 @@ const UI_TEXTS := {
 		"atlas_calculated_size": "गणना किया गया आकार",
 		"atlas_allowed_limit": "अनुमत सीमा",
 		"atlas_reduce_instruction": "रेंडर चौड़ाई, व्यू संख्या या फ्रेम संख्या कम करें, या एटलस मोड के बिना फिर से रेंडर करें।",
-		"reset_button_tooltip": "मूल मान पर रीसेट करें"
+		"reset_button_tooltip": "मूल मान पर रीसेट करें",
+		"rendering_message": "रेंडरिंग जारी है..."
 	},
 	"de": {
 		"language_label": "Sprache",
@@ -183,7 +188,8 @@ const UI_TEXTS := {
 		"atlas_calculated_size": "Berechnete Größe",
 		"atlas_allowed_limit": "Erlaubtes Limit",
 		"atlas_reduce_instruction": "Verringere Render-Breite, Ansichten oder Frames, oder rendere ohne Atlas-Modus erneut.",
-		"reset_button_tooltip": "Auf den ursprünglichen Wert zurücksetzen"
+		"reset_button_tooltip": "Auf den ursprünglichen Wert zurücksetzen",
+		"rendering_message": "Wird gerendert..."
 	},
 	"ja": {
 		"language_label": "言語",
@@ -211,7 +217,8 @@ const UI_TEXTS := {
 		"atlas_calculated_size": "計算サイズ",
 		"atlas_allowed_limit": "許容上限",
 		"atlas_reduce_instruction": "レンダー幅、ビュー数、またはフレーム数を減らすか、アトラスモードなしで再レンダーしてください。",
-		"reset_button_tooltip": "元の値に戻す"
+		"reset_button_tooltip": "元の値に戻す",
+		"rendering_message": "レンダリング中..."
 	},
 	"pt": {
 		"language_label": "Idioma",
@@ -239,7 +246,8 @@ const UI_TEXTS := {
 		"atlas_calculated_size": "Tamanho calculado",
 		"atlas_allowed_limit": "Limite permitido",
 		"atlas_reduce_instruction": "Reduza a largura de render, o número de vistas ou frames, ou renderize novamente sem o modo atlas.",
-		"reset_button_tooltip": "Redefinir para o valor original"
+		"reset_button_tooltip": "Redefinir para o valor original",
+		"rendering_message": "Renderizando..."
 	},
 	"it": {
 		"language_label": "Lingua",
@@ -267,7 +275,8 @@ const UI_TEXTS := {
 		"atlas_calculated_size": "Dimensione calcolata",
 		"atlas_allowed_limit": "Limite consentito",
 		"atlas_reduce_instruction": "Riduci la larghezza di render, il numero di viste o di frame, oppure renderizza di nuovo senza modalità atlas.",
-		"reset_button_tooltip": "Ripristina al valore originale"
+		"reset_button_tooltip": "Ripristina al valore originale",
+		"rendering_message": "Rendering in corso..."
 	},
 	"ru": {
 		"language_label": "Язык",
@@ -295,7 +304,8 @@ const UI_TEXTS := {
 		"atlas_calculated_size": "Рассчитанный размер",
 		"atlas_allowed_limit": "Допустимый предел",
 		"atlas_reduce_instruction": "Уменьшите ширину рендера, количество видов или кадров, либо выполните рендер без режима атласа.",
-		"reset_button_tooltip": "Сбросить к исходному значению"
+		"reset_button_tooltip": "Сбросить к исходному значению",
+		"rendering_message": "Выполняется рендеринг..."
 	},
 	"uk": {
 		"language_label": "Мова",
@@ -323,7 +333,8 @@ const UI_TEXTS := {
 		"atlas_calculated_size": "Розрахований розмір",
 		"atlas_allowed_limit": "Дозволена межа",
 		"atlas_reduce_instruction": "Зменште ширину рендеру, кількість ракурсів або кадрів, або перерендерте без режиму атласу.",
-		"reset_button_tooltip": "Скинути до початкового значення"
+		"reset_button_tooltip": "Скинути до початкового значення",
+		"rendering_message": "Виконується рендеринг..."
 	},
 	"ar": {
 		"language_label": "اللغة",
@@ -351,7 +362,8 @@ const UI_TEXTS := {
 		"atlas_calculated_size": "الحجم المحسوب",
 		"atlas_allowed_limit": "الحد المسموح",
 		"atlas_reduce_instruction": "خفّض عرض التصيير أو عدد الزوايا أو عدد الإطارات، أو أعد التصيير بدون وضع الأطلس.",
-		"reset_button_tooltip": "إعادة الضبط إلى القيمة الأصلية"
+		"reset_button_tooltip": "إعادة الضبط إلى القيمة الأصلية",
+		"rendering_message": "جاري التصيير..."
 	},
 	"id": {
 		"language_label": "Bahasa",
@@ -379,7 +391,8 @@ const UI_TEXTS := {
 		"atlas_calculated_size": "Ukuran terhitung",
 		"atlas_allowed_limit": "Batas yang diizinkan",
 		"atlas_reduce_instruction": "Kurangi lebar render, jumlah sudut, atau jumlah frame, atau render ulang tanpa mode atlas.",
-		"reset_button_tooltip": "Setel ulang ke nilai asli"
+		"reset_button_tooltip": "Setel ulang ke nilai asli",
+		"rendering_message": "Sedang merender..."
 	},
 }
 
@@ -485,6 +498,7 @@ func _apply_language(language_code: String) -> void:
 	_set_text("XPosition_text", "text", texts["x_position"])
 	_set_text("YPosition_text", "text", texts["y_position"])
 	_set_text("ZPosition_text", "text", texts["z_position"])
+	_set_text("RenderingLabel", "text", texts["rendering_message"])
 	_set_text("ModelRotaton_text", "text", texts["model_rotation"])
 	_set_text("FileDialog", "title", texts["file_dialog_title"])
 	_set_text("FileDialog", "ok_button_text", texts["file_dialog_ok"])
