@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://b7tai1raj74a0" path="res://Scripts/github_button.gd" id="3_8jw8o"]
 [ext_resource type="Script" uid="uid://ckgrl6sgpptqo" path="res://Scripts/language_selector.gd" id="4_lang1"]
 [ext_resource type="PackedScene" uid="uid://bfumbinjl1fm5" path="res://Scenes/RotationSphere.tscn" id="5_rotsp_scene"]
+[ext_resource type="Script" path="res://Scripts/model_mouse_drag.gd" id="6_mdrag"]
 
 [node name="Prerender" type="Node3D" unique_id=2021081997]
 script = ExtResource("1_nmjra")
@@ -26,6 +27,12 @@ fov = 45.0
 [node name="Camera3D" type="Camera3D" parent="." unique_id=831506227]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.68983)
 fov = 45.0
+
+[node name="ModelMouseDrag" type="Node" parent="."]
+script = ExtResource("6_mdrag")
+drag_target_path = NodePath("../SubViewport/RenderScene")
+ui_root_path = NodePath("../Control")
+interaction_camera_path = NodePath("../Camera3D")
 
 [node name="Control" type="Control" parent="." unique_id=1386501373]
 clip_contents = true

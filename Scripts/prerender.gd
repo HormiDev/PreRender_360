@@ -38,6 +38,7 @@ const ATLAS_MAX_PIXELS := 268435456
 @onready var render_pos_x_spin: SpinBox = $Control.get_node_or_null("RenderPosXSpin")
 @onready var render_pos_y_spin: SpinBox = $Control.get_node_or_null("RenderPosYSpin")
 @onready var render_pos_z_spin: SpinBox = $Control.get_node_or_null("RenderPosZSpin")
+@onready var model_mouse_drag = $ModelMouseDrag
 @onready var n_frames_spin: SpinBox = $Control.get_node_or_null("NFrames")
 @onready var atlas_mode_check: CheckBox = $Control.get_node_or_null("AtlasModeCheck")
 @onready var atlas_error_dialog: AcceptDialog = $Control.get_node_or_null("AtlasErrorDialog")
@@ -113,6 +114,13 @@ func _ready():
 		render_pos_y_spin.value_changed.connect(_on_render_position_changed)
 	if render_pos_z_spin:
 		render_pos_z_spin.value_changed.connect(_on_render_position_changed)
+	if model_mouse_drag != null:
+		if model_mouse_drag.has_method("set_drag_target"):
+			model_mouse_drag.set_drag_target(render_scene)
+		if model_mouse_drag.has_signal("drag_target_moved"):
+			model_mouse_drag.drag_target_moved.connect(_on_drag_target_moved)
+		if model_mouse_drag.has_signal("scale_step_requested"):
+			model_mouse_drag.scale_step_requested.connect(_on_scale_step_requested)
 
 	# Intensidad de la luz
 	light_intensity_slider.value_changed.connect(_on_light_intensity_changed)
@@ -130,6 +138,8 @@ func _ready():
 		normalize_model_recursive(scene)
 		_apply_user_scale()
 		_apply_model_rotation()
+		if model_mouse_drag != null and model_mouse_drag.has_method("set_pick_root"):
+			model_mouse_drag.set_pick_root(scene)
 		_update_nframes_ui()
 	
 		# Color RGB de la luz
@@ -997,6 +1007,8 @@ func load_glb_runtime_from_bytes(data: PackedByteArray, source_name: String = ""
 	# Limpia modelos previos
 	for child in render_scene.get_children():
 		child.queue_free()
+	if model_mouse_drag != null and model_mouse_drag.has_method("set_pick_root"):
+		model_mouse_drag.set_pick_root(null)
 
 	var gltf: GLTFDocument = GLTFDocument.new()
 	var state: GLTFState = GLTFState.new()
@@ -1029,6 +1041,8 @@ func _add_to_render_scene(scene: Node) -> void:
 
 	# Guardar referencia para escalar luego
 	current_model = scene
+	if model_mouse_drag != null and model_mouse_drag.has_method("set_pick_root") and scene is Node3D:
+		model_mouse_drag.set_pick_root(scene as Node3D)
 
 	# Normalizar todos los meshes
 	normalize_model_recursive(scene)
@@ -1171,6 +1185,21 @@ func _on_render_position_changed(_value: float) -> void:
 	var pos_y = float(render_pos_y_spin.value) if render_pos_y_spin else render_scene.position.y
 	var pos_z = float(render_pos_z_spin.value) if render_pos_z_spin else render_scene.position.z
 	render_scene.position = Vector3(pos_x, pos_y, pos_z)
+
+
+func _on_drag_target_moved(new_position: Vector3) -> void:
+	if render_pos_x_spin:
+		render_pos_x_spin.set_value_no_signal(new_position.x)
+	if render_pos_y_spin:
+		render_pos_y_spin.set_value_no_signal(new_position.y)
+	if render_pos_z_spin:
+		render_pos_z_spin.set_value_no_signal(new_position.z)
+
+
+func _on_scale_step_requested(step_delta: float) -> void:
+	var target_scale: float = float(scale_spin.value) + step_delta
+	target_scale = clampf(target_scale, float(scale_spin.min_value), float(scale_spin.max_value))
+	scale_spin.value = target_scale
 
 # Description: Adjusts directional light intensity.
 # Args: value (float) — new intensity
