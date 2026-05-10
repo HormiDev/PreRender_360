@@ -2,6 +2,7 @@
 extends HBoxContainer
 
 signal rotation_changed(pitch: float, yaw: float, roll: float)
+signal rotation_delta(pitch_delta: float, yaw_delta: float, roll_delta: float)
 
 var sphere: Control = null
 var spin_x: SpinBox = null
@@ -40,18 +41,18 @@ func _ready() -> void:
 		call_deferred("_deferred_setup_sphere")
 
 	if spin_x:
-		spin_x.min_value = -360.0
-		spin_x.max_value = 360.0
+		spin_x.min_value = -180.0
+		spin_x.max_value = 180.0
 		spin_x.step = 0.1
 		spin_x.connect("value_changed", Callable(self, "_on_spin_changed"))
 	if spin_y:
-		spin_y.min_value = -360.0
-		spin_y.max_value = 360.0
+		spin_y.min_value = -180.0
+		spin_y.max_value = 180.0
 		spin_y.step = 0.1
 		spin_y.connect("value_changed", Callable(self, "_on_spin_changed"))
 	if spin_z:
-		spin_z.min_value = -360.0
-		spin_z.max_value = 360.0
+		spin_z.min_value = -180.0
+		spin_z.max_value = 180.0
 		spin_z.step = 0.1
 		spin_z.connect("value_changed", Callable(self, "_on_spin_changed"))
 
@@ -65,6 +66,8 @@ func _deferred_setup_sphere() -> void:
 		return
 	if sphere.has_signal("rotation_changed"):
 		sphere.connect("rotation_changed", Callable(self, "_on_sphere_rotation_changed"))
+	if sphere.has_signal("rotation_delta"):
+		sphere.connect("rotation_delta", Callable(self, "_on_sphere_rotation_delta"))
 	_update_spins_from_sphere()
 
 # Description: Locates and assigns spinbox nodes from the Controls container by scanning row labels.
@@ -127,6 +130,9 @@ func _on_sphere_rotation_changed(pitch: float, yaw: float, roll: float) -> void:
 	if spin_z:
 		spin_z.set_block_signals(false)
 	emit_signal("rotation_changed", pitch, yaw, roll)
+
+func _on_sphere_rotation_delta(pitch_delta: float, yaw_delta: float, roll_delta: float) -> void:
+	emit_signal("rotation_delta", pitch_delta, yaw_delta, roll_delta)
 
 # Description: Updates sphere rotation when a spinbox value changes.
 # Args: value (float) — new spinbox value (unused, uses all spinbox values)

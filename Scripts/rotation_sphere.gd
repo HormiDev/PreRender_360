@@ -19,8 +19,6 @@ enum InteractionMode {
 @export var ring_samples: int = 256
 
 const ROLL_RING_MARGIN_RATIO: float = 0.03
-const MAX_PITCH_DEGREES: float = 89.0
-
 var pitch_degrees: float = 0.0
 var yaw_degrees: float = 0.0
 var roll_degrees: float = 0.0
@@ -55,6 +53,7 @@ func set_sphere_rotation(pitch: float, yaw: float, roll: float = 0.0) -> void:
 # Returns: void
 func set_sphere_basis(basis: Basis) -> void:
 	_rotation_basis = basis.orthonormalized()
+	_sync_rotation_degrees_from_basis()
 	queue_redraw()
 
 # ---------- INPUT ----------
@@ -89,11 +88,7 @@ func _gui_input(event: InputEvent) -> void:
 			var current_angle: float = _pointer_angle(event.position)
 			var angle_delta: float = rad_to_deg(wrapf(current_angle - _last_ring_angle, -PI, PI))
 			_last_ring_angle = current_angle
-			# Update roll value to follow the visual direction
-			roll_degrees = wrapf(roll_degrees - angle_delta, -360.0, 360.0)
-			# Apply roll as a rotation in screen space: pre-multiply by a rotation
-			# around the world Z axis so the projected X/Y positions rotate
-			# with the user's ring drag (this moves all axes as seen on-screen).
+			# Apply roll as a rotation in screen space so the projected axes follow the ring drag.
 			_rotation_basis = (Basis(Vector3.FORWARD, deg_to_rad(-angle_delta)) * _rotation_basis).orthonormalized()
 			_sync_rotation_degrees_from_basis()
 			rotation_delta.emit(0.0, 0.0, -angle_delta)
@@ -190,16 +185,43 @@ func _build_rotation_basis() -> Basis:
 	var pitch: float = deg_to_rad(pitch_degrees)
 	var yaw: float = deg_to_rad(yaw_degrees)
 	var roll: float = deg_to_rad(roll_degrees)
-	return Basis(Vector3.UP, yaw) * Basis(Vector3.RIGHT, pitch) * Basis(Vector3.FORWARD, roll)
+	return Basis.from_euler(Vector3(pitch, yaw, roll))
 
 # Description: Synchronizes euler angle degrees from the current rotation basis.
 # Args: none (uses internal _rotation_basis)
 # Returns: void
 func _sync_rotation_degrees_from_basis() -> void:
 	var euler: Vector3 = _rotation_basis.get_euler()
-	pitch_degrees = rad_to_deg(euler.x)
-	yaw_degrees = rad_to_deg(euler.y)
-	roll_degrees = rad_to_deg(euler.z)
+	var primary := Vector3(
+		_wrap_degrees(rad_to_deg(euler.x)),
+		_wrap_degrees(rad_to_deg(euler.y)),
+		_wrap_degrees(rad_to_deg(euler.z))
+	)
+	var alternate := Vector3(
+		_wrap_degrees(180.0 - primary.x),
+		_wrap_degrees(primary.y + 180.0),
+		_wrap_degrees(primary.z + 180.0)
+	)
+	var current := Vector3(pitch_degrees, yaw_degrees, roll_degrees)
+	var selected: Vector3 = primary
+	if _rotation_degrees_distance(alternate, current) < _rotation_degrees_distance(primary, current):
+		selected = alternate
+
+	pitch_degrees = selected.x
+	yaw_degrees = selected.y
+	roll_degrees = selected.z
+
+func _wrap_degrees(value: float) -> float:
+	return wrapf(value, -180.0, 180.0)
+
+func _angle_delta_degrees(from_value: float, to_value: float) -> float:
+	return wrapf(to_value - from_value, -180.0, 180.0)
+
+func _rotation_degrees_distance(a: Vector3, b: Vector3) -> float:
+	var dx: float = _angle_delta_degrees(a.x, b.x)
+	var dy: float = _angle_delta_degrees(a.y, b.y)
+	var dz: float = _angle_delta_degrees(a.z, b.z)
+	return (dx * dx) + (dy * dy) + (dz * dz)
 
 # ---------- RING DRAWING ----------
 # Description: Draws a single axis ring projected into 2D screen space (deprecated, use _draw_projected_ring_fast).

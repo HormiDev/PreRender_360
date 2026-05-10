@@ -5,6 +5,7 @@ extends SpinBox
 @export var reset_button_tooltip_key := "reset_button_tooltip"
 @export var reset_button_gap := 4.0
 @export var reset_button_width := 22.0
+@export var reset_button_tolerance: float = 0.05
 
 var _original_value: float = 0.0
 var _last_observed_value: float = 0.0
@@ -36,7 +37,7 @@ func _create_reset_button() -> void:
 	_reset_button = Button.new()
 	_reset_button.text = reset_button_text
 	_update_reset_button_tooltip()
-	_reset_button.visible = false
+	_reset_button.visible = true
 	_reset_button.focus_mode = Control.FOCUS_NONE
 	_reset_button.custom_minimum_size = Vector2(reset_button_width, 0.0)
 	_reset_button.pressed.connect(_on_reset_button_pressed)
@@ -80,7 +81,11 @@ func _update_reset_button_visibility() -> void:
 	if _reset_button == null:
 		return
 
-	_reset_button.visible = not is_equal_approx(value, _original_value)
+	var should_show: bool = abs(value - _original_value) > reset_button_tolerance
+	_reset_button.visible = true
+	_reset_button.disabled = not should_show
+	_reset_button.mouse_filter = Control.MOUSE_FILTER_STOP if should_show else Control.MOUSE_FILTER_IGNORE
+	_reset_button.modulate.a = 1.0 if should_show else 0.0
 
 
 func _update_reset_button_tooltip() -> void:

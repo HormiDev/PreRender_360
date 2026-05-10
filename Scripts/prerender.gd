@@ -104,10 +104,10 @@ func _ready():
 			light_rotation_control.rotation_changed.connect(_on_light_rotation_changed)
 	# Rotacion del modelo
 	if model_rotation_control != null:
-		if model_rotation_control.has_signal("rotation_delta"):
-			model_rotation_control.rotation_delta.connect(_on_model_rotation_delta)
-		elif model_rotation_control.has_signal("rotation_changed"):
+		if model_rotation_control.has_signal("rotation_changed"):
 			model_rotation_control.rotation_changed.connect(_on_model_rotation_changed)
+		elif model_rotation_control.has_signal("rotation_delta"):
+			model_rotation_control.rotation_delta.connect(_on_model_rotation_delta)
 	
 	# Posición del RenderScene
 	if render_pos_x_spin:
