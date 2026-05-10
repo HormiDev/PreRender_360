@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://bfumbinjl1fm5" path="res://Scenes/RotationSphere.tscn" id="5_rotsp_scene"]
 [ext_resource type="Script" uid="uid://1ir53qhx71lv" path="res://Scripts/model_mouse_drag.gd" id="6_mdrag"]
 [ext_resource type="Script" uid="uid://xw2hlg475s" path="res://Scripts/resettable_spinbox.gd" id="7_reset_spin"]
+[ext_resource type="PackedScene" uid="uid://chx5oxngqrxs" path="res://Scenes/CameraFovControl.tscn" id="8_fov_control"]
 
 [sub_resource type="StyleBoxFlat" id="RenderButtonStyle"]
 bg_color = Color(0.16728574, 0.33918113, 0.40073216, 1)
@@ -17,7 +18,7 @@ corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
 [sub_resource type="StyleBoxFlat" id="RenderButtonStyleHover"]
-bg_color = Color(0.26, 0.43, 0.50, 1)
+bg_color = Color(0.26, 0.43, 0.5, 1)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
@@ -275,6 +276,22 @@ step = 0.01
 value = 1.0
 script = ExtResource("7_reset_spin")
 
+[node name="CameraFov_text" type="Label" parent="Control" unique_id=1876543201]
+layout_mode = 0
+offset_left = 1627.0
+offset_top = 403.0
+offset_right = 1780.0
+offset_bottom = 431.0
+text = "Camera FOV"
+
+[node name="CameraFovControl" parent="Control" unique_id=1876543203 instance=ExtResource("8_fov_control")]
+layout_mode = 0
+offset_left = 1627.0
+offset_top = 433.0
+offset_right = 1987.0
+offset_bottom = 503.0
+camera_paths = Array[NodePath]([NodePath("../../Camera3D"), NodePath("../../SubViewport/RenderCamera3D")])
+
 [node name="LigthRotaton_text" type="Label" parent="Control" unique_id=1121088066]
 layout_mode = 0
 offset_left = 1578.0
@@ -301,9 +318,9 @@ grow_vertical = 1
 [node name="ModelRotaton_text" type="Label" parent="Control" unique_id=1488295052]
 layout_mode = 0
 offset_left = 31.0
-offset_top = 199.0
+offset_top = 175.0
 offset_right = 208.0
-offset_bottom = 227.0
+offset_bottom = 203.0
 text = "Model Rotation"
 
 [node name="ModelRotationSphere" parent="Control" unique_id=476555313 instance=ExtResource("5_rotsp_scene")]
@@ -315,9 +332,9 @@ anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
 offset_left = 26.0
-offset_top = 208.0
-offset_right = 334.0
-offset_bottom = 348.0
+offset_top = 184.0
+offset_right = 370.0
+offset_bottom = 364.0
 grow_horizontal = 1
 grow_vertical = 1
 
@@ -390,17 +407,17 @@ placeholder_text = "Save Name"
 [node name="XPosition_text" type="Label" parent="Control" unique_id=1244129325]
 layout_mode = 0
 offset_left = 27.0
-offset_top = 412.0
+offset_top = 390.0
 offset_right = 138.0
-offset_bottom = 440.0
+offset_bottom = 418.0
 text = "X Position"
 
 [node name="RenderPosXSpin" type="SpinBox" parent="Control" unique_id=577724354]
 layout_mode = 0
 offset_left = 188.0
-offset_top = 410.0
+offset_top = 388.0
 offset_right = 274.563
-offset_bottom = 441.0
+offset_bottom = 419.0
 min_value = -100.0
 step = 0.01
 script = ExtResource("7_reset_spin")
@@ -408,17 +425,17 @@ script = ExtResource("7_reset_spin")
 [node name="YPosition_text" type="Label" parent="Control" unique_id=104684558]
 layout_mode = 0
 offset_left = 27.0
-offset_top = 452.0
+offset_top = 430.0
 offset_right = 138.0
-offset_bottom = 480.0
+offset_bottom = 458.0
 text = "Y Position"
 
 [node name="RenderPosYSpin" type="SpinBox" parent="Control" unique_id=1234646578]
 layout_mode = 0
 offset_left = 188.0
-offset_top = 450.0
+offset_top = 428.0
 offset_right = 274.563
-offset_bottom = 481.0
+offset_bottom = 459.0
 min_value = -100.0
 step = 0.01
 script = ExtResource("7_reset_spin")
@@ -426,17 +443,17 @@ script = ExtResource("7_reset_spin")
 [node name="ZPosition_text" type="Label" parent="Control" unique_id=890006659]
 layout_mode = 0
 offset_left = 27.0
-offset_top = 492.0
+offset_top = 470.0
 offset_right = 138.0
-offset_bottom = 520.0
+offset_bottom = 498.0
 text = "Z Position"
 
 [node name="RenderPosZSpin" type="SpinBox" parent="Control" unique_id=132296953]
 layout_mode = 0
 offset_left = 188.0
-offset_top = 490.0
+offset_top = 468.0
 offset_right = 274.563
-offset_bottom = 521.0
+offset_bottom = 499.0
 min_value = -100.0
 step = 0.01
 script = ExtResource("7_reset_spin")

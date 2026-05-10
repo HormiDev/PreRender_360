@@ -1,0 +1,45 @@
+[gd_scene format=3 uid="uid://chx5oxngqrxs"]
+
+[ext_resource type="Script" uid="uid://dnpx5evq36yum" path="res://Scripts/camera_fov_control.gd" id="1_fov_control"]
+[ext_resource type="Script" uid="uid://xw2hlg475s" path="res://Scripts/resettable_spinbox.gd" id="2_s1pb1"]
+
+[node name="CameraFovControl" type="Control" unique_id=112078817]
+custom_minimum_size = Vector2(360, 70)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 360.0
+offset_bottom = 70.0
+script = ExtResource("1_fov_control")
+
+[node name="CameraEmoji" type="Label" parent="." unique_id=554634776]
+layout_mode = 0
+offset_top = 17.0
+offset_right = 42.0
+offset_bottom = 52.0
+theme_override_font_sizes/font_size = 28
+text = "📷"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CameraFovSlider" type="HSlider" parent="." unique_id=1515290876]
+layout_mode = 0
+offset_left = 100.0
+offset_top = 14.0
+offset_right = 256.0
+offset_bottom = 30.0
+min_value = 1.0
+max_value = 179.0
+step = 0.1
+value = 45.0
+
+[node name="CameraFovSpinBox" type="SpinBox" parent="." unique_id=821807612]
+layout_mode = 0
+offset_left = 104.0
+offset_top = 38.0
+offset_right = 190.56299
+offset_bottom = 69.0
+min_value = 1.0
+max_value = 179.0
+step = 0.1
+value = 45.0
+script = ExtResource("2_s1pb1")

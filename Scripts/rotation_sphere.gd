@@ -1,3 +1,4 @@
+@tool
 extends Control
 
 signal rotation_changed(pitch_degrees: float, yaw_degrees: float, roll_degrees: float)
