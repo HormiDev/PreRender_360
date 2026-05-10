@@ -11,6 +11,7 @@ signal scale_step_requested(step_delta: float)
 @export var scroll_z_step: float = 0.01
 
 const _PICK_COLLISION_LAYER_VALUE: int = 1 << 19
+const _ANIMATION_OUTLINE_NODE_NAME := "__animation_outline"
 
 var _drag_target: Node3D = null
 var _pick_root: Node3D = null
@@ -227,6 +228,9 @@ func _rebuild_pick_colliders() -> void:
 	var stack: Array[Node] = [_pick_root]
 	while not stack.is_empty():
 		var node: Node = stack.pop_back() as Node
+		if node.name == _ANIMATION_OUTLINE_NODE_NAME:
+			continue
+
 		for child in node.get_children():
 			stack.push_back(child)
 

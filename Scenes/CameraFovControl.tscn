@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dnpx5evq36yum" path="res://Scripts/camera_fov_control.gd" id="1_fov_control"]
 [ext_resource type="Script" uid="uid://xw2hlg475s" path="res://Scripts/resettable_spinbox.gd" id="2_s1pb1"]
+[ext_resource type="Texture2D" uid="uid://hlf1uxyobyu4" path="res://PreRender_360_icon.svg" id="3_xsrch"]
 
 [node name="CameraFovControl" type="Control" unique_id=112078817]
 custom_minimum_size = Vector2(360, 70)
@@ -23,9 +24,9 @@ vertical_alignment = 1
 
 [node name="CameraFovSlider" type="HSlider" parent="." unique_id=1515290876]
 layout_mode = 0
-offset_left = 100.0
+offset_left = 112.0
 offset_top = 14.0
-offset_right = 256.0
+offset_right = 268.0
 offset_bottom = 30.0
 min_value = 1.0
 max_value = 179.0
@@ -34,12 +35,18 @@ value = 45.0
 
 [node name="CameraFovSpinBox" type="SpinBox" parent="." unique_id=821807612]
 layout_mode = 0
-offset_left = 104.0
+offset_left = 116.0
 offset_top = 38.0
-offset_right = 190.56299
+offset_right = 202.56299
 offset_bottom = 69.0
 min_value = 1.0
 max_value = 179.0
 step = 0.1
 value = 45.0
 script = ExtResource("2_s1pb1")
+
+[node name="PreRender360Icon" type="Sprite2D" parent="." unique_id=866332614]
+modulate = Color(0, 0, 0, 1)
+position = Vector2(93.99999, 34)
+scale = Vector2(0.070800796, 0.072021484)
+texture = ExtResource("3_xsrch")

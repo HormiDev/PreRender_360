@@ -9,6 +9,7 @@
 [ext_resource type="Script" uid="uid://1ir53qhx71lv" path="res://Scripts/model_mouse_drag.gd" id="6_mdrag"]
 [ext_resource type="Script" uid="uid://xw2hlg475s" path="res://Scripts/resettable_spinbox.gd" id="7_reset_spin"]
 [ext_resource type="PackedScene" uid="uid://chx5oxngqrxs" path="res://Scenes/CameraFovControl.tscn" id="8_fov_control"]
+[ext_resource type="Script" uid="uid://b2qsha6w4r7p0" path="res://Scripts/shader_selector.gd" id="9_shader_selector"]
 
 [sub_resource type="StyleBoxFlat" id="RenderButtonStyle"]
 bg_color = Color(0.16728574, 0.33918113, 0.40073216, 1)
@@ -31,6 +32,15 @@ default_model = ExtResource("2_jv76k")
 [node name="SubViewport" type="SubViewport" parent="." unique_id=93327156]
 transparent_bg = true
 render_target_update_mode = 4
+
+[node name="PostProcessOverlay" type="ColorRect" parent="SubViewport" unique_id=20932740]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
 
 [node name="RenderScene" type="Node3D" parent="SubViewport" unique_id=1213114864]
 
@@ -58,6 +68,16 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="PreviewPostProcessOverlay" type="ColorRect" parent="Control" unique_id=875323664]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
 
 [node name="Button" type="Button" parent="Control" unique_id=1018349512]
 layout_mode = 1
@@ -216,6 +236,35 @@ offset_top = 998.0
 offset_right = 227.0
 offset_bottom = 1029.0
 text = "Atlas mode"
+metadata/_edit_use_anchors_ = true
+
+[node name="Shader_text" type="Label" parent="Control" unique_id=1440615921]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = -0.36018518
+anchor_bottom = -0.36018518
+offset_left = 28.0
+offset_top = 925.0
+offset_right = 139.0
+offset_bottom = 953.0
+text = "Shader"
+metadata/_edit_use_anchors_ = true
+
+[node name="ShaderOption" type="OptionButton" parent="Control" unique_id=1629706918]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.01822885
+anchor_top = -0.36018518
+anchor_right = 0.01822885
+anchor_bottom = -0.36018518
+offset_left = 151.0
+offset_top = 924.0
+offset_right = 244.0
+offset_bottom = 956.0
+script = ExtResource("9_shader_selector")
+render_viewport_path = NodePath("../../SubViewport")
+render_post_process_overlay_path = NodePath("../../SubViewport/PostProcessOverlay")
+preview_post_process_overlay_path = NodePath("../PreviewPostProcessOverlay")
 metadata/_edit_use_anchors_ = true
 
 [node name="ImportButton" type="Button" parent="Control" unique_id=1274385209]

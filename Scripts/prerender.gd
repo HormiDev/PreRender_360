@@ -23,6 +23,7 @@ const ATLAS_MAX_PIXELS := 268435456
 @onready var height_spin: SpinBox = $Control/RenderHeigth
 @onready var captures_spin: SpinBox = $Control/NViews
 @onready var format_option: OptionButton = $Control/ImageFormat
+@onready var shader_option: OptionButton = $Control/ShaderOption
 @onready var file_prefix_input: LineEdit = $Control/FilePrefixInput
 @onready var capture_button: Button = $Control/Button
 @onready var scale_spin: SpinBox = $Control/ScaleSpin
@@ -92,6 +93,10 @@ func _ready():
 	format_option.add_item("XPM", int(ImageFormat.XPM))
 	format_option.add_item("XPM_ARGB", int(ImageFormat.XPM_ARGB))
 	format_option.select(int(ImageFormat.PNG))
+
+	if language_selector != null:
+		language_selector.set_language(language_selector.get_current_language())
+
 	ensure_capture_folder()
 	# Botón import
 	import_button.pressed.connect(_on_import_button_pressed)
@@ -138,6 +143,7 @@ func _ready():
 		current_model = scene
 		# Normalizar y aplicar escala inicial
 		normalize_model_recursive(scene)
+		_set_shader_model(scene)
 		_apply_user_scale()
 		_apply_model_rotation()
 		if model_mouse_drag != null and model_mouse_drag.has_method("set_pick_root"):
@@ -177,6 +183,7 @@ func _on_button_pressed():
 		return
 
 	viewport.size = Vector2i(render_width, render_height)
+	_refresh_shader_render_size()
 
 	_show_rendering_message()
 	await capture_360()
@@ -1009,6 +1016,7 @@ func load_glb_runtime(path: String) -> void:
 # Returns: void
 func load_glb_runtime_from_bytes(data: PackedByteArray, source_name: String = "") -> void:
 	# Limpia modelos previos
+	_set_shader_model(null)
 	for child in render_scene.get_children():
 		child.queue_free()
 	if model_mouse_drag != null and model_mouse_drag.has_method("set_pick_root"):
@@ -1050,6 +1058,7 @@ func _add_to_render_scene(scene: Node) -> void:
 
 	# Normalizar todos los meshes
 	normalize_model_recursive(scene)
+	_set_shader_model(scene)
 
 	# Aplicar la escala inicial del usuario
 	_apply_user_scale()
@@ -1219,6 +1228,20 @@ func _on_light_color_changed(value: float) -> void:
 	var g: float = float(light_g_slider.value) / 255.0
 	var b: float = float(light_b_slider.value) / 255.0
 	directional_light.light_color = Color(r, g, b, 1.0)
+
+
+func _set_shader_model(model: Node) -> void:
+	if shader_option != null and shader_option.has_method("set_model"):
+		shader_option.set_model(model)
+
+
+func _refresh_shader_render_size() -> void:
+	if shader_option == null:
+		return
+	if shader_option.has_method("refresh_render_size"):
+		shader_option.refresh_render_size()
+	if shader_option.has_method("apply_selected_shader"):
+		shader_option.apply_selected_shader()
 
 # Description: Shows the rendering message panel with the current language text.
 # Args: none

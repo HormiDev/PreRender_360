@@ -25,6 +25,14 @@ const UI_TEXTS := {
 		"n_frames": "N Frames",
 		"n_views": "N Views",
 		"image_format": "Format image",
+		"post_shader": "Shader",
+		"shader_none": "None",
+		"shader_black_white": "Black & White",
+		"shader_animation": "Animation Style",
+		"shader_comic": "Comic Style",
+		"shader_traditional_animation": "Traditional Animation",
+		"shader_pencil_sketch": "Pencil Sketch",
+		"shader_colored_pencil": "Colored Pencil",
 		"atlas_mode": "Atlas mode",
 		"import_button": "Import model .glb",
 		"file_dialog_title": "Open a File",
@@ -55,6 +63,14 @@ const UI_TEXTS := {
 		"n_frames": "N. de frames",
 		"n_views": "N. de vistas",
 		"image_format": "Formato de imagen",
+		"post_shader": "Sombreador",
+		"shader_none": "Ninguno",
+		"shader_black_white": "Blanco y negro",
+		"shader_animation": "Estilo animacion",
+		"shader_comic": "Estilo comic",
+		"shader_traditional_animation": "Animacion tradicional",
+		"shader_pencil_sketch": "Boceto a lapiz",
+		"shader_colored_pencil": "Lapiz de color",
 		"atlas_mode": "Modo atlas",
 		"import_button": "Importar modelo .glb",
 		"file_dialog_title": "Abrir un archivo",
@@ -85,6 +101,14 @@ const UI_TEXTS := {
 		"n_frames": "N. de frames",
 		"n_views": "N. de vues",
 		"image_format": "Format d'image",
+		"post_shader": "Nuanceur",
+		"shader_none": "Aucun",
+		"shader_black_white": "Noir et blanc",
+		"shader_animation": "Style animation",
+		"shader_comic": "Style BD",
+		"shader_traditional_animation": "Animation traditionnelle",
+		"shader_pencil_sketch": "Croquis au crayon",
+		"shader_colored_pencil": "Crayon de couleur",
 		"atlas_mode": "Mode atlas",
 		"import_button": "Importer le modèle .glb",
 		"file_dialog_title": "Ouvrir un fichier",
@@ -115,6 +139,14 @@ const UI_TEXTS := {
 		"n_frames": "帧数",
 		"n_views": "视图数",
 		"image_format": "图像格式",
+		"post_shader": "着色器",
+		"shader_none": "无",
+		"shader_black_white": "黑白",
+		"shader_animation": "动画风格",
+		"shader_comic": "漫画风格",
+		"shader_traditional_animation": "传统动画",
+		"shader_pencil_sketch": "铅笔草图",
+		"shader_colored_pencil": "彩色铅笔",
 		"atlas_mode": "图集模式",
 		"import_button": "导入 .glb 模型",
 		"file_dialog_title": "打开文件",
@@ -145,6 +177,14 @@ const UI_TEXTS := {
 		"n_frames": "फ्रेम संख्या",
 		"n_views": "व्यू संख्या",
 		"image_format": "इमेज फ़ॉर्मेट",
+		"post_shader": "शेडर",
+		"shader_none": "कोई नहीं",
+		"shader_black_white": "काला और सफेद",
+		"shader_animation": "एनीमेशन शैली",
+		"shader_comic": "कॉमिक शैली",
+		"shader_traditional_animation": "पारंपरिक एनीमेशन",
+		"shader_pencil_sketch": "पेंसिल स्केच",
+		"shader_colored_pencil": "रंगीन पेंसिल",
 		"atlas_mode": "एटलस मोड",
 		"import_button": ".glb मॉडल आयात करें",
 		"file_dialog_title": "फ़ाइल खोलें",
@@ -175,6 +215,14 @@ const UI_TEXTS := {
 		"n_frames": "Anzahl Frames",
 		"n_views": "Anzahl Ansichten",
 		"image_format": "Bildformat",
+		"post_shader": "Schattierer",
+		"shader_none": "Keiner",
+		"shader_black_white": "Schwarz-Weiss",
+		"shader_animation": "Animationsstil",
+		"shader_comic": "Comicstil",
+		"shader_traditional_animation": "Traditionelle Animation",
+		"shader_pencil_sketch": "Bleistiftskizze",
+		"shader_colored_pencil": "Buntstift",
 		"atlas_mode": "Atlas-Modus",
 		"import_button": ".glb-Modell importieren",
 		"file_dialog_title": "Datei öffnen",
@@ -205,6 +253,14 @@ const UI_TEXTS := {
 		"n_frames": "フレーム数",
 		"n_views": "ビュー数",
 		"image_format": "画像形式",
+		"post_shader": "シェーダー",
+		"shader_none": "なし",
+		"shader_black_white": "白黒",
+		"shader_animation": "アニメ風",
+		"shader_comic": "コミック風",
+		"shader_traditional_animation": "手描きアニメ",
+		"shader_pencil_sketch": "鉛筆スケッチ",
+		"shader_colored_pencil": "色鉛筆",
 		"atlas_mode": "アトラスモード",
 		"import_button": ".glb モデルを読み込む",
 		"file_dialog_title": "ファイルを開く",
@@ -235,6 +291,14 @@ const UI_TEXTS := {
 		"n_frames": "Nº de frames",
 		"n_views": "Nº de vistas",
 		"image_format": "Formato de imagem",
+		"post_shader": "Sombreador",
+		"shader_none": "Nenhum",
+		"shader_black_white": "Preto e branco",
+		"shader_animation": "Estilo animacao",
+		"shader_comic": "Estilo comic",
+		"shader_traditional_animation": "Animacao tradicional",
+		"shader_pencil_sketch": "Esboco a lapis",
+		"shader_colored_pencil": "Lapis de cor",
 		"atlas_mode": "Modo atlas",
 		"import_button": "Importar modelo .glb",
 		"file_dialog_title": "Abrir arquivo",
@@ -265,6 +329,14 @@ const UI_TEXTS := {
 		"n_frames": "N. frame",
 		"n_views": "N. viste",
 		"image_format": "Formato immagine",
+		"post_shader": "Ombreggiatore",
+		"shader_none": "Nessuno",
+		"shader_black_white": "Bianco e nero",
+		"shader_animation": "Stile animazione",
+		"shader_comic": "Stile fumetto",
+		"shader_traditional_animation": "Animazione tradizionale",
+		"shader_pencil_sketch": "Schizzo a matita",
+		"shader_colored_pencil": "Matita colorata",
 		"atlas_mode": "Modalità atlas",
 		"import_button": "Importa modello .glb",
 		"file_dialog_title": "Apri file",
@@ -295,6 +367,14 @@ const UI_TEXTS := {
 		"n_frames": "Кол-во кадров",
 		"n_views": "Кол-во видов",
 		"image_format": "Формат изображения",
+		"post_shader": "Затенитель",
+		"shader_none": "Нет",
+		"shader_black_white": "Черно-белый",
+		"shader_animation": "Стиль анимации",
+		"shader_comic": "Стиль комикса",
+		"shader_traditional_animation": "Традиционная анимация",
+		"shader_pencil_sketch": "Карандашный набросок",
+		"shader_colored_pencil": "Цветной карандаш",
 		"atlas_mode": "Режим атласа",
 		"import_button": "Импортировать модель .glb",
 		"file_dialog_title": "Открыть файл",
@@ -325,6 +405,14 @@ const UI_TEXTS := {
 		"n_frames": "К-сть кадрів",
 		"n_views": "К-сть ракурсів",
 		"image_format": "Формат зображення",
+		"post_shader": "Затінювач",
+		"shader_none": "Немає",
+		"shader_black_white": "Чорно-білий",
+		"shader_animation": "Стиль анімації",
+		"shader_comic": "Стиль коміксу",
+		"shader_traditional_animation": "Традиційна анімація",
+		"shader_pencil_sketch": "Олівцевий ескіз",
+		"shader_colored_pencil": "Кольоровий олівець",
 		"atlas_mode": "Режим атласу",
 		"import_button": "Імпортувати модель .glb",
 		"file_dialog_title": "Відкрити файл",
@@ -355,6 +443,14 @@ const UI_TEXTS := {
 		"n_frames": "عدد الإطارات",
 		"n_views": "عدد الزوايا",
 		"image_format": "صيغة الصورة",
+		"post_shader": "المظلل",
+		"shader_none": "بدون",
+		"shader_black_white": "أبيض وأسود",
+		"shader_animation": "نمط رسوم متحركة",
+		"shader_comic": "نمط قصص مصورة",
+		"shader_traditional_animation": "رسوم متحركة تقليدية",
+		"shader_pencil_sketch": "رسم بقلم رصاص",
+		"shader_colored_pencil": "قلم رصاص ملون",
 		"atlas_mode": "وضع الأطلس",
 		"import_button": "استيراد نموذج .glb",
 		"file_dialog_title": "فتح ملف",
@@ -385,6 +481,14 @@ const UI_TEXTS := {
 		"n_frames": "Jumlah frame",
 		"n_views": "Jumlah sudut",
 		"image_format": "Format gambar",
+		"post_shader": "Pewarna",
+		"shader_none": "Tidak ada",
+		"shader_black_white": "Hitam putih",
+		"shader_animation": "Gaya animasi",
+		"shader_comic": "Gaya komik",
+		"shader_traditional_animation": "Animasi tradisional",
+		"shader_pencil_sketch": "Sketsa pensil",
+		"shader_colored_pencil": "Pensil warna",
 		"atlas_mode": "Mode atlas",
 		"import_button": "Impor model .glb",
 		"file_dialog_title": "Buka file",
@@ -412,6 +516,7 @@ const UI_TEXTS := {
 var _control: Control
 var _language_option: OptionButton
 var _format_option: OptionButton
+var _shader_option: OptionButton
 var _current_language := "en"
 
 
@@ -425,6 +530,7 @@ func _ready() -> void:
 
 	_language_option = _control.get_node_or_null("LanguageOptionButton") as OptionButton
 	_format_option = _control.get_node_or_null("ImageFormat") as OptionButton
+	_shader_option = _control.get_node_or_null("ShaderOption") as OptionButton
 	_populate_language_options()
 	_apply_language("en")
 
@@ -500,6 +606,7 @@ func _apply_language(language_code: String) -> void:
 	_set_text("NFrames_text", "text", texts["n_frames"])
 	_set_text("NViews_text", "text", texts["n_views"])
 	_set_text("ImageFormat_text", "text", texts["image_format"])
+	_set_text("Shader_text", "text", get_text("post_shader"))
 	_set_text("AtlasModeCheck", "text", texts["atlas_mode"])
 	_set_text("ImportButton", "text", texts["import_button"])
 	_set_text("AtlasErrorDialog", "title", texts["atlas_error_title"])
@@ -517,6 +624,7 @@ func _apply_language(language_code: String) -> void:
 	_set_text("FileDialog", "title", texts["file_dialog_title"])
 	_set_text("FileDialog", "ok_button_text", texts["file_dialog_ok"])
 	_translate_format_options()
+	_translate_shader_options()
 
 	if _language_option != null:
 		var selected_index := LANGUAGE_CODES.find(language_code)
@@ -539,6 +647,22 @@ func _translate_format_options() -> void:
 	_format_option.set_item_text(2, "WEBP")
 	_format_option.set_item_text(3, "XPM")
 	_format_option.set_item_text(4, "XPM_ARGB")
+
+
+# Description: Updates post-process shader option labels.
+# Args: none
+# Returns: void
+func _translate_shader_options() -> void:
+	if _shader_option == null or _shader_option.item_count < 7:
+		return
+
+	_shader_option.set_item_text(0, get_text("shader_none"))
+	_shader_option.set_item_text(1, get_text("shader_black_white"))
+	_shader_option.set_item_text(2, get_text("shader_animation"))
+	_shader_option.set_item_text(3, get_text("shader_comic"))
+	_shader_option.set_item_text(4, get_text("shader_traditional_animation"))
+	_shader_option.set_item_text(5, get_text("shader_pencil_sketch"))
+	_shader_option.set_item_text(6, get_text("shader_colored_pencil"))
 
 
 # Description: Sets a property on a UI node when that node exists.
