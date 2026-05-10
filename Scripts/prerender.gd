@@ -128,6 +128,8 @@ func _ready():
 			model_mouse_drag.drag_target_moved.connect(_on_drag_target_moved)
 		if model_mouse_drag.has_signal("scale_step_requested"):
 			model_mouse_drag.scale_step_requested.connect(_on_scale_step_requested)
+		if model_mouse_drag.has_signal("rotation_delta_requested"):
+			model_mouse_drag.rotation_delta_requested.connect(_on_model_rotation_delta)
 
 	# Intensidad de la luz
 	light_intensity_slider.value_changed.connect(_on_light_intensity_changed)
@@ -329,6 +331,7 @@ func capture_360() -> void:
 	var has_anim := anim_player != null and anim_player.get_animation_list().size() > 0
 	var atlas_mode := atlas_mode_check != null and atlas_mode_check.button_pressed
 	var total_frames := 1
+	var capture_anim_name := ""
 	if has_anim:
 		total_frames = int(n_frames_spin.value) if n_frames_spin else 30
 		if total_frames <= 0:
@@ -340,6 +343,7 @@ func capture_360() -> void:
 
 	if has_anim:
 		var anim_name: String = anim_player.get_animation_list()[0]
+		capture_anim_name = anim_name
 		var anim := anim_player.get_animation(anim_name)
 
 		anim_player.play(anim_name)
@@ -409,6 +413,26 @@ func capture_360() -> void:
 		var zip_data := build_zip_from_files(_web_capture_buffers)
 		JavaScriptBridge.download_buffer(zip_data, zip_name, "application/zip")
 		_web_capture_buffers.clear()
+
+	_restore_capture_start_state(anim_player, capture_anim_name)
+	await get_tree().process_frame
+
+# Description: Restores the preview to the first captured view and animation frame after rendering.
+# Args: anim_player (AnimationPlayer) - animation player used for capture, if any
+#       anim_name (String) - animation captured during render
+# Returns: void
+func _restore_capture_start_state(anim_player: AnimationPlayer, anim_name: String) -> void:
+	render_scene.rotation = Vector3.ZERO
+
+	if anim_player == null or anim_name == "":
+		return
+	if not anim_player.has_animation(anim_name):
+		return
+
+	anim_player.play(anim_name)
+	anim_player.speed_scale = 0.0
+	anim_player.seek(0.0, true)
+	anim_player.advance(0.0)
 
 # ---------- GUARDAR ----------
 # Description: Saves an image to disk or downloads on web based on selected format.
@@ -1155,6 +1179,7 @@ func _on_model_rotation_delta(pitch_delta: float, yaw_delta: float, roll_delta: 
 	model_rotation_pitch = r_deg.x
 	model_rotation_yaw = r_deg.y
 	model_rotation_roll = r_deg.z
+	_sync_model_rotation_spinboxes()
 
 
 # Description: Applies the current model rotation to the active model.
@@ -1187,6 +1212,27 @@ func _process(_delta: float) -> void:
 		model_rotation_control.set_sphere_basis(model_basis)
 	elif model_rotation_control.has_method("set_sphere_rotation"):
 		model_rotation_control.set_sphere_rotation(model_rotation_pitch, model_rotation_yaw, model_rotation_roll)
+
+
+func _sync_model_rotation_spinboxes() -> void:
+	if model_rotation_control == null:
+		return
+
+	if model_rotation_control.has_method("set_rotation_euler_degrees_no_signal"):
+		model_rotation_control.set_rotation_euler_degrees_no_signal(model_rotation_pitch, model_rotation_yaw, model_rotation_roll)
+		return
+
+	var spin_x := model_rotation_control.find_child("Row_X#Spin_X", true, false) as SpinBox
+	var spin_y := model_rotation_control.find_child("Row_Y#Spin_Y", true, false) as SpinBox
+	var spin_z := model_rotation_control.find_child("Row_Z#Spin_Z", true, false) as SpinBox
+
+	if spin_x:
+		spin_x.set_value_no_signal(model_rotation_pitch)
+	if spin_y:
+		spin_y.set_value_no_signal(model_rotation_yaw)
+	if spin_z:
+		spin_z.set_value_no_signal(model_rotation_roll)
+
 
 # Description: Updates `render_scene` position based on spinners.
 # Args: _value (float) — new value (not directly used)

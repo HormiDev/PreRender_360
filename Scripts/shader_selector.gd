@@ -63,19 +63,19 @@ func refresh_render_size() -> void:
 # Returns: void
 func apply_selected_shader() -> void:
 	var selected_shader := get_selected_id()
-	var material: Material = _post_process_materials.get(selected_shader, null)
-	var use_post_process := material != null
+	var post_process_material: Material = _post_process_materials.get(selected_shader, null)
+	var use_post_process := post_process_material != null
 	var use_outline := _shader_uses_outline(selected_shader)
 
 	_set_outlines_enabled(use_outline)
 
 	if _render_post_process_overlay != null:
 		_update_render_overlay_size()
-		_render_post_process_overlay.material = material
+		_render_post_process_overlay.material = post_process_material
 		_render_post_process_overlay.visible = use_post_process
 
 	if _preview_post_process_overlay != null:
-		_preview_post_process_overlay.material = material
+		_preview_post_process_overlay.material = post_process_material
 		_preview_post_process_overlay.visible = use_post_process
 
 
@@ -195,6 +195,7 @@ func _update_render_overlay_size() -> void:
 	if _render_post_process_overlay == null or _render_viewport == null:
 		return
 
+	_render_post_process_overlay.set_anchors_preset(Control.PRESET_TOP_LEFT)
 	_render_post_process_overlay.position = Vector2.ZERO
 	_render_post_process_overlay.size = Vector2(
 		float(_render_viewport.size.x),

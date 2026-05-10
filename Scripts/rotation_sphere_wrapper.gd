@@ -196,3 +196,18 @@ func set_rotation_euler_degrees(pitch: float, yaw: float, roll: float) -> void:
 	if sphere and sphere.has_method("set_sphere_rotation"):
 		sphere.call("set_sphere_rotation", pitch, yaw, roll)
 	emit_signal("rotation_changed", pitch, yaw, roll)
+
+
+# Description: Updates sphere and spinboxes from an external model rotation without emitting signals.
+# Args: pitch (float) — X rotation, yaw (float) — Y rotation, roll (float) — Z rotation
+# Returns: void
+func set_rotation_euler_degrees_no_signal(pitch: float, yaw: float, roll: float) -> void:
+	if sphere and sphere.has_method("set_sphere_rotation"):
+		sphere.call("set_sphere_rotation", pitch, yaw, roll)
+
+	if spin_x:
+		spin_x.set_value_no_signal(pitch)
+	if spin_y:
+		spin_y.set_value_no_signal(yaw)
+	if spin_z:
+		spin_z.set_value_no_signal(roll)

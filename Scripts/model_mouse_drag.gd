@@ -2,6 +2,7 @@ extends Node
 
 signal drag_target_moved(new_position: Vector3)
 signal scale_step_requested(step_delta: float)
+signal rotation_delta_requested(pitch_delta: float, yaw_delta: float, roll_delta: float)
 
 @export var drag_target_path: NodePath
 @export var ui_root_path: NodePath
@@ -9,6 +10,7 @@ signal scale_step_requested(step_delta: float)
 @export var max_pick_distance: float = 1000.0
 @export var scroll_scale_step: float = 0.01
 @export var scroll_z_step: float = 0.01
+@export var right_drag_rotation_sensitivity: float = 0.35
 
 const _PICK_COLLISION_LAYER_VALUE: int = 1 << 19
 const _ANIMATION_OUTLINE_NODE_NAME := "__animation_outline"
@@ -23,6 +25,8 @@ var _is_dragging: bool = false
 var _drag_start_target_position: Vector3 = Vector3.ZERO
 var _drag_start_hit_point: Vector3 = Vector3.ZERO
 var _drag_plane: Plane = Plane(Vector3.FORWARD, 0.0)
+var _is_rotating: bool = false
+var _last_rotation_mouse_position: Vector2 = Vector2.ZERO
 
 # ---------- READY ----------
 # Description: Initializes camera, UI and drag target references from exported NodePaths.
@@ -63,22 +67,33 @@ func _input(event: InputEvent) -> void:
 
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		if event.pressed:
+			if _is_rotating:
+				return
 			_try_begin_drag(event.position)
 		else:
 			_end_drag()
+	elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT:
+		if event.pressed:
+			if _is_dragging:
+				return
+			_try_begin_rotation(event.position)
+		else:
+			_end_rotation()
 	elif event is InputEventMouseButton and event.pressed:
 		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
 			if _is_dragging:
 				_scroll_z(1.0)
-			else:
+			elif not _is_rotating:
 				_try_scroll_scale(event.position, 1.0)
 		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
 			if _is_dragging:
 				_scroll_z(-1.0)
-			else:
+			elif not _is_rotating:
 				_try_scroll_scale(event.position, -1.0)
 	elif event is InputEventMouseMotion and _is_dragging:
 		_update_drag(event.position)
+	elif event is InputEventMouseMotion and _is_rotating:
+		_update_rotation(event.position)
 
 
 # ---------- DRAG ----------
@@ -133,6 +148,50 @@ func _update_drag(mouse_position: Vector2) -> void:
 # Returns: void
 func _end_drag() -> void:
 	_is_dragging = false
+
+
+# ---------- ROTATION ----------
+# Description: Starts a rotation operation if the cursor hits the model through raycast picking.
+# Args: mouse_position (Vector2) — screen-space mouse position
+# Returns: void
+func _try_begin_rotation(mouse_position: Vector2) -> void:
+	if _is_over_blocking_ui():
+		return
+
+	var camera: Camera3D = _get_interaction_camera()
+	if camera == null:
+		return
+
+	var ray_origin: Vector3 = camera.project_ray_origin(mouse_position)
+	var ray_direction: Vector3 = camera.project_ray_normal(mouse_position).normalized()
+	var hit: Dictionary = _raycast_pick_root(ray_origin, ray_direction)
+	if hit.is_empty():
+		return
+
+	_is_rotating = true
+	_last_rotation_mouse_position = mouse_position
+
+
+# Description: Emits rotation deltas using the same pitch/yaw mapping as RotationSphere trackball drag.
+# Args: mouse_position (Vector2) — current screen-space mouse position
+# Returns: void
+func _update_rotation(mouse_position: Vector2) -> void:
+	var delta: Vector2 = mouse_position - _last_rotation_mouse_position
+	_last_rotation_mouse_position = mouse_position
+
+	if delta == Vector2.ZERO:
+		return
+
+	var pitch_delta: float = delta.y * right_drag_rotation_sensitivity
+	var yaw_delta: float = delta.x * right_drag_rotation_sensitivity
+	rotation_delta_requested.emit(pitch_delta, yaw_delta, 0.0)
+
+
+# Description: Stops the active right-click rotation operation.
+# Args: none
+# Returns: void
+func _end_rotation() -> void:
+	_is_rotating = false
 
 
 # ---------- SCALE ----------
