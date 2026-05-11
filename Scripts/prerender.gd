@@ -1163,7 +1163,8 @@ func _on_model_rotation_delta(pitch_delta: float, yaw_delta: float, roll_delta: 
 		var b: Basis = b_yaw * b_pitch * b_roll
 
 		var gt: Transform3D = current_model.global_transform
-		gt.basis = (b * gt.basis).orthonormalized()
+		var current_scale: Vector3 = gt.basis.get_scale()
+		gt.basis = (b * gt.basis.orthonormalized()).scaled(current_scale)
 		current_model.global_transform = gt
 	else:
 		# Fallback: rotate in local axes
@@ -1273,7 +1274,10 @@ func _on_light_color_changed(value: float) -> void:
 	var r: float = float(light_r_slider.value) / 255.0
 	var g: float = float(light_g_slider.value) / 255.0
 	var b: float = float(light_b_slider.value) / 255.0
-	directional_light.light_color = Color(r, g, b, 1.0)
+	var color := Color(r, g, b, 1.0)
+	directional_light.light_color = color
+	if shader_option != null and shader_option.has_method("set_light_color"):
+		shader_option.set_light_color(color)
 
 
 func _set_shader_model(model: Node) -> void:

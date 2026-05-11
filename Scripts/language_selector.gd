@@ -33,6 +33,8 @@ const UI_TEXTS := {
 		"shader_traditional_animation": "Traditional Animation",
 		"shader_pencil_sketch": "Pencil Sketch",
 		"shader_colored_pencil": "Colored Pencil",
+		"shader_neon": "Neon",
+		"shader_light_color_highlights": "Light Color Highlights",
 		"atlas_mode": "Atlas mode",
 		"import_button": "Import model .glb",
 		"file_dialog_title": "Open a File",
@@ -71,6 +73,8 @@ const UI_TEXTS := {
 		"shader_traditional_animation": "Animacion tradicional",
 		"shader_pencil_sketch": "Boceto a lapiz",
 		"shader_colored_pencil": "Lapiz de color",
+		"shader_neon": "Neón",
+		"shader_light_color_highlights": "Color de luz en brillos",
 		"atlas_mode": "Modo atlas",
 		"import_button": "Importar modelo .glb",
 		"file_dialog_title": "Abrir un archivo",
@@ -109,6 +113,8 @@ const UI_TEXTS := {
 		"shader_traditional_animation": "Animation traditionnelle",
 		"shader_pencil_sketch": "Croquis au crayon",
 		"shader_colored_pencil": "Crayon de couleur",
+		"shader_neon": "Néon",
+		"shader_light_color_highlights": "Couleur de lumiere sur reflets",
 		"atlas_mode": "Mode atlas",
 		"import_button": "Importer le modèle .glb",
 		"file_dialog_title": "Ouvrir un fichier",
@@ -147,6 +153,8 @@ const UI_TEXTS := {
 		"shader_traditional_animation": "传统动画",
 		"shader_pencil_sketch": "铅笔草图",
 		"shader_colored_pencil": "彩色铅笔",
+		"shader_neon": "霓虹",
+		"shader_light_color_highlights": "高光灯光颜色",
 		"atlas_mode": "图集模式",
 		"import_button": "导入 .glb 模型",
 		"file_dialog_title": "打开文件",
@@ -185,6 +193,8 @@ const UI_TEXTS := {
 		"shader_traditional_animation": "पारंपरिक एनीमेशन",
 		"shader_pencil_sketch": "पेंसिल स्केच",
 		"shader_colored_pencil": "रंगीन पेंसिल",
+		"shader_neon": "नीयॉन",
+		"shader_light_color_highlights": "हाइलाइट में लाइट रंग",
 		"atlas_mode": "एटलस मोड",
 		"import_button": ".glb मॉडल आयात करें",
 		"file_dialog_title": "फ़ाइल खोलें",
@@ -223,6 +233,8 @@ const UI_TEXTS := {
 		"shader_traditional_animation": "Traditionelle Animation",
 		"shader_pencil_sketch": "Bleistiftskizze",
 		"shader_colored_pencil": "Buntstift",
+		"shader_neon": "Neonlicht",
+		"shader_light_color_highlights": "Lichtfarbe in Highlights",
 		"atlas_mode": "Atlas-Modus",
 		"import_button": ".glb-Modell importieren",
 		"file_dialog_title": "Datei öffnen",
@@ -261,6 +273,8 @@ const UI_TEXTS := {
 		"shader_traditional_animation": "手描きアニメ",
 		"shader_pencil_sketch": "鉛筆スケッチ",
 		"shader_colored_pencil": "色鉛筆",
+		"shader_neon": "ネオン",
+		"shader_light_color_highlights": "ハイライトのライトカラー",
 		"atlas_mode": "アトラスモード",
 		"import_button": ".glb モデルを読み込む",
 		"file_dialog_title": "ファイルを開く",
@@ -299,6 +313,8 @@ const UI_TEXTS := {
 		"shader_traditional_animation": "Animacao tradicional",
 		"shader_pencil_sketch": "Esboco a lapis",
 		"shader_colored_pencil": "Lapis de cor",
+		"shader_neon": "Néon",
+		"shader_light_color_highlights": "Cor da luz nos brilhos",
 		"atlas_mode": "Modo atlas",
 		"import_button": "Importar modelo .glb",
 		"file_dialog_title": "Abrir arquivo",
@@ -337,6 +353,8 @@ const UI_TEXTS := {
 		"shader_traditional_animation": "Animazione tradizionale",
 		"shader_pencil_sketch": "Schizzo a matita",
 		"shader_colored_pencil": "Matita colorata",
+		"shader_neon": "Luce neon",
+		"shader_light_color_highlights": "Colore luce nei riflessi",
 		"atlas_mode": "Modalità atlas",
 		"import_button": "Importa modello .glb",
 		"file_dialog_title": "Apri file",
@@ -375,6 +393,8 @@ const UI_TEXTS := {
 		"shader_traditional_animation": "Традиционная анимация",
 		"shader_pencil_sketch": "Карандашный набросок",
 		"shader_colored_pencil": "Цветной карандаш",
+		"shader_neon": "Неон",
+		"shader_light_color_highlights": "Цвет света в бликах",
 		"atlas_mode": "Режим атласа",
 		"import_button": "Импортировать модель .glb",
 		"file_dialog_title": "Открыть файл",
@@ -413,6 +433,8 @@ const UI_TEXTS := {
 		"shader_traditional_animation": "Традиційна анімація",
 		"shader_pencil_sketch": "Олівцевий ескіз",
 		"shader_colored_pencil": "Кольоровий олівець",
+		"shader_neon": "Неон",
+		"shader_light_color_highlights": "Колір світла у відблисках",
 		"atlas_mode": "Режим атласу",
 		"import_button": "Імпортувати модель .glb",
 		"file_dialog_title": "Відкрити файл",
@@ -451,6 +473,8 @@ const UI_TEXTS := {
 		"shader_traditional_animation": "رسوم متحركة تقليدية",
 		"shader_pencil_sketch": "رسم بقلم رصاص",
 		"shader_colored_pencil": "قلم رصاص ملون",
+		"shader_neon": "نيون",
+		"shader_light_color_highlights": "لون الضوء في اللمعات",
 		"atlas_mode": "وضع الأطلس",
 		"import_button": "استيراد نموذج .glb",
 		"file_dialog_title": "فتح ملف",
@@ -489,6 +513,8 @@ const UI_TEXTS := {
 		"shader_traditional_animation": "Animasi tradisional",
 		"shader_pencil_sketch": "Sketsa pensil",
 		"shader_colored_pencil": "Pensil warna",
+		"shader_neon": "Neon",
+		"shader_light_color_highlights": "Warna cahaya pada sorotan",
 		"atlas_mode": "Mode atlas",
 		"import_button": "Impor model .glb",
 		"file_dialog_title": "Buka file",
@@ -653,16 +679,25 @@ func _translate_format_options() -> void:
 # Args: none
 # Returns: void
 func _translate_shader_options() -> void:
-	if _shader_option == null or _shader_option.item_count < 7:
+	if _shader_option == null:
 		return
 
-	_shader_option.set_item_text(0, get_text("shader_none"))
-	_shader_option.set_item_text(1, get_text("shader_black_white"))
-	_shader_option.set_item_text(2, get_text("shader_animation"))
-	_shader_option.set_item_text(3, get_text("shader_comic"))
-	_shader_option.set_item_text(4, get_text("shader_traditional_animation"))
-	_shader_option.set_item_text(5, get_text("shader_pencil_sketch"))
-	_shader_option.set_item_text(6, get_text("shader_colored_pencil"))
+	var shader_texts := {
+		0: "shader_none",
+		1: "shader_black_white",
+		2: "shader_animation",
+		3: "shader_comic",
+		4: "shader_traditional_animation",
+		5: "shader_pencil_sketch",
+		6: "shader_colored_pencil",
+		7: "shader_neon",
+		8: "shader_light_color_highlights",
+	}
+
+	for item_index in range(_shader_option.item_count):
+		var shader_id := _shader_option.get_item_id(item_index)
+		if shader_texts.has(shader_id):
+			_shader_option.set_item_text(item_index, get_text(str(shader_texts[shader_id])))
 
 
 # Description: Sets a property on a UI node when that node exists.

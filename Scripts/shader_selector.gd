@@ -7,12 +7,16 @@ enum PostProcessShader {
 	COMIC,
 	TRADITIONAL_ANIMATION,
 	PENCIL_SKETCH,
-	COLORED_PENCIL
+	COLORED_PENCIL,
+	NEON,
+	LIGHT_COLOR_HIGHLIGHTS
 }
 
 const GRAYSCALE_POST_PROCESS_SHADER := preload("res://Shaders/grayscale_post_process.gdshader")
+const LIGHT_COLOR_HIGHLIGHTS_POST_PROCESS_SHADER := preload("res://Shaders/light_color_highlights_post_process.gdshader")
 const ANIMATION_POST_PROCESS_SHADER := preload("res://Shaders/animation_post_process.gdshader")
 const COMIC_POST_PROCESS_SHADER := preload("res://Shaders/comic_post_process.gdshader")
+const NEON_POST_PROCESS_SHADER := preload("res://Shaders/neon_post_process.gdshader")
 const TRADITIONAL_ANIMATION_POST_PROCESS_SHADER := preload("res://Shaders/traditional_animation_post_process.gdshader")
 const PENCIL_SKETCH_POST_PROCESS_SHADER := preload("res://Shaders/pencil_sketch_post_process.gdshader")
 const COLORED_PENCIL_POST_PROCESS_SHADER := preload("res://Shaders/colored_pencil_post_process.gdshader")
@@ -30,6 +34,7 @@ var _current_model: Node = null
 var _post_process_materials: Dictionary = {}
 var _outline_material: ShaderMaterial = null
 var _outline_nodes: Array[MeshInstance3D] = []
+var _light_color := Color(1.0, 1.0, 1.0, 1.0)
 
 
 func _ready() -> void:
@@ -56,6 +61,16 @@ func set_model(model: Node) -> void:
 # Returns: void
 func refresh_render_size() -> void:
 	_update_render_overlay_size()
+
+
+# Description: Updates post-process shaders that need the current directional light color.
+# Args: color (Color) - current directional light color
+# Returns: void
+func set_light_color(color: Color) -> void:
+	_light_color = color
+	var light_highlights_material := _post_process_materials.get(int(PostProcessShader.LIGHT_COLOR_HIGHLIGHTS), null) as ShaderMaterial
+	if light_highlights_material != null:
+		light_highlights_material.set_shader_parameter("light_color", color)
 
 
 # Description: Reapplies the currently selected shader to preview and capture overlays.
@@ -92,8 +107,10 @@ func _populate_shader_options() -> void:
 	clear()
 	add_item("None", int(PostProcessShader.NONE))
 	add_item("Black & White", int(PostProcessShader.BLACK_AND_WHITE))
+	add_item("Light Color Highlights", int(PostProcessShader.LIGHT_COLOR_HIGHLIGHTS))
 	add_item("Animation Style", int(PostProcessShader.ANIMATION))
 	add_item("Comic Style", int(PostProcessShader.COMIC))
+	add_item("Neon", int(PostProcessShader.NEON))
 	add_item("Traditional Animation", int(PostProcessShader.TRADITIONAL_ANIMATION))
 	add_item("Pencil Sketch", int(PostProcessShader.PENCIL_SKETCH))
 	add_item("Colored Pencil", int(PostProcessShader.COLORED_PENCIL))
@@ -111,6 +128,11 @@ func _create_post_process_materials() -> void:
 	grayscale_material.shader = GRAYSCALE_POST_PROCESS_SHADER
 	_post_process_materials[int(PostProcessShader.BLACK_AND_WHITE)] = grayscale_material
 
+	var light_color_highlights_material := ShaderMaterial.new()
+	light_color_highlights_material.shader = LIGHT_COLOR_HIGHLIGHTS_POST_PROCESS_SHADER
+	light_color_highlights_material.set_shader_parameter("light_color", _light_color)
+	_post_process_materials[int(PostProcessShader.LIGHT_COLOR_HIGHLIGHTS)] = light_color_highlights_material
+
 	var animation_material := ShaderMaterial.new()
 	animation_material.shader = ANIMATION_POST_PROCESS_SHADER
 	_post_process_materials[int(PostProcessShader.ANIMATION)] = animation_material
@@ -118,6 +140,10 @@ func _create_post_process_materials() -> void:
 	var comic_material := ShaderMaterial.new()
 	comic_material.shader = COMIC_POST_PROCESS_SHADER
 	_post_process_materials[int(PostProcessShader.COMIC)] = comic_material
+
+	var neon_material := ShaderMaterial.new()
+	neon_material.shader = NEON_POST_PROCESS_SHADER
+	_post_process_materials[int(PostProcessShader.NEON)] = neon_material
 
 	var traditional_animation_material := ShaderMaterial.new()
 	traditional_animation_material.shader = TRADITIONAL_ANIMATION_POST_PROCESS_SHADER
