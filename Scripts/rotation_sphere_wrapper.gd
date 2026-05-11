@@ -131,6 +131,9 @@ func _on_sphere_rotation_changed(pitch: float, yaw: float, roll: float) -> void:
 		spin_z.set_block_signals(false)
 	emit_signal("rotation_changed", pitch, yaw, roll)
 
+# Description: Relays incremental sphere rotation deltas from the wrapped sphere.
+# Args: pitch_delta (float) - X rotation delta, yaw_delta (float) - Y rotation delta, roll_delta (float) - Z rotation delta
+# Returns: void
 func _on_sphere_rotation_delta(pitch_delta: float, yaw_delta: float, roll_delta: float) -> void:
 	emit_signal("rotation_delta", pitch_delta, yaw_delta, roll_delta)
 

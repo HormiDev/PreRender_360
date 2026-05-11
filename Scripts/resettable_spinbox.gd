@@ -14,6 +14,9 @@ var _reset_button: Button
 var _language_selector: Node = null
 
 
+# Description: Stores the original value and initializes the reset button behavior.
+# Args: none
+# Returns: void
 func _ready() -> void:
 	_original_value = value
 	_last_observed_value = value
@@ -26,6 +29,9 @@ func _ready() -> void:
 	_update_reset_button_visibility()
 
 
+# Description: Creates the sibling reset button and configures its default state.
+# Args: none
+# Returns: void
 func _create_reset_button() -> void:
 	if _reset_button != null:
 		return
@@ -45,6 +51,9 @@ func _create_reset_button() -> void:
 	call_deferred("_attach_reset_button")
 
 
+# Description: Adds the reset button next to this SpinBox and refreshes its layout.
+# Args: none
+# Returns: void
 func _attach_reset_button() -> void:
 	if _reset_button == null:
 		return
@@ -62,6 +71,9 @@ func _attach_reset_button() -> void:
 	_update_reset_button_visibility()
 
 
+# Description: Positions and sizes the reset button when the parent is not a Container.
+# Args: none
+# Returns: void
 func _update_reset_button_layout() -> void:
 	if _reset_button == null:
 		return
@@ -77,6 +89,9 @@ func _update_reset_button_layout() -> void:
 	_reset_button.size = Vector2(reset_button_width, size.y)
 
 
+# Description: Enables and fades the reset button based on whether the value changed.
+# Args: none
+# Returns: void
 func _update_reset_button_visibility() -> void:
 	if _reset_button == null:
 		return
@@ -88,6 +103,9 @@ func _update_reset_button_visibility() -> void:
 	_reset_button.modulate.a = 1.0 if should_show else 0.0
 
 
+# Description: Updates the reset button tooltip from the language selector or fallback text.
+# Args: none
+# Returns: void
 func _update_reset_button_tooltip() -> void:
 	if _reset_button == null:
 		return
@@ -98,6 +116,9 @@ func _update_reset_button_tooltip() -> void:
 		_reset_button.tooltip_text = reset_button_tooltip
 
 
+# Description: Finds the scene language selector used for localized reset tooltips.
+# Args: none
+# Returns: Node - LanguageSelector node if found, otherwise null
 func _find_language_selector() -> Node:
 	var scene := get_tree().current_scene if get_tree() != null else null
 	if scene == null:
@@ -105,6 +126,9 @@ func _find_language_selector() -> Node:
 	return scene.find_child("LanguageSelector", true, false)
 
 
+# Description: Watches for silent value or language changes and refreshes reset button UI.
+# Args: _delta (float) - frame delta, unused
+# Returns: void
 func _process(_delta: float) -> void:
 	if is_equal_approx(value, _last_observed_value):
 		pass
@@ -120,12 +144,18 @@ func _process(_delta: float) -> void:
 		_update_reset_button_tooltip()
 
 
+# Description: Handles SpinBox value changes and updates reset button state.
+# Args: _new_value (float) - new SpinBox value, unused because value is read directly
+# Returns: void
 func _on_value_changed(_new_value: float) -> void:
 	_last_observed_value = value
 	_update_reset_button_visibility()
 	_update_reset_button_tooltip()
 
 
+# Description: Restores the SpinBox to its original value.
+# Args: none
+# Returns: void
 func _on_reset_button_pressed() -> void:
 	value = _original_value
 	_last_observed_value = value

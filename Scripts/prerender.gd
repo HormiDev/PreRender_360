@@ -219,6 +219,9 @@ func _validate_atlas_mode_limits() -> bool:
 	return false
 
 
+# Description: Builds the localized error message shown when atlas output is too large.
+# Args: atlas_width (int) - calculated atlas width, atlas_height (int) - calculated atlas height, atlas_pixels (int) - total atlas pixels
+# Returns: String - formatted atlas size error message
 func _build_atlas_error_message(atlas_width: int, atlas_height: int, atlas_pixels: int) -> String:
 	var disabled_prefix := "Atlas mode disabled: the resulting image would be too large."
 	var calculated_size := "Calculated size"
@@ -1146,6 +1149,9 @@ func _on_model_rotation_changed(pitch_degrees: float, yaw_degrees: float, roll_d
 	_apply_model_rotation()
 
 
+# Description: Applies incremental model rotation deltas while preserving model scale.
+# Args: pitch_delta (float) - X rotation delta, yaw_delta (float) - Y rotation delta, roll_delta (float) - Z rotation delta
+# Returns: void
 func _on_model_rotation_delta(pitch_delta: float, yaw_delta: float, roll_delta: float) -> void:
 	if current_model == null:
 		return
@@ -1191,11 +1197,16 @@ func _apply_model_rotation() -> void:
 		return
 	current_model.rotation_degrees = Vector3(model_rotation_pitch, model_rotation_yaw, model_rotation_roll)
 
+# Description: Applies the current light rotation values to the directional light.
+# Args: none
+# Returns: void
 func _apply_light_rotation() -> void:
 	directional_light.rotation_degrees = Vector3(light_rotation_pitch, light_rotation_yaw, light_rotation_roll)
 
 
-# This ensures any animations or external transforms are reflected in the sphere control.
+# Description: Synchronizes model rotation UI with the current model transform each frame.
+# Args: _delta (float) - frame delta, unused
+# Returns: void
 func _process(_delta: float) -> void:
 	if current_model == null or model_rotation_control == null:
 		return
@@ -1215,6 +1226,9 @@ func _process(_delta: float) -> void:
 		model_rotation_control.set_sphere_rotation(model_rotation_pitch, model_rotation_yaw, model_rotation_roll)
 
 
+# Description: Updates model rotation spinboxes without emitting rotation signals.
+# Args: none
+# Returns: void
 func _sync_model_rotation_spinboxes() -> void:
 	if model_rotation_control == null:
 		return
@@ -1247,6 +1261,9 @@ func _on_render_position_changed(_value: float) -> void:
 	render_scene.position = Vector3(pos_x, pos_y, pos_z)
 
 
+# Description: Mirrors dragged render scene position into the position spinboxes.
+# Args: new_position (Vector3) - current dragged render scene position
+# Returns: void
 func _on_drag_target_moved(new_position: Vector3) -> void:
 	if render_pos_x_spin:
 		render_pos_x_spin.set_value_no_signal(new_position.x)
@@ -1256,6 +1273,9 @@ func _on_drag_target_moved(new_position: Vector3) -> void:
 		render_pos_z_spin.set_value_no_signal(new_position.z)
 
 
+# Description: Applies a mouse wheel scale step to the model scale SpinBox.
+# Args: step_delta (float) - amount to add to the current scale value
+# Returns: void
 func _on_scale_step_requested(step_delta: float) -> void:
 	var target_scale: float = float(scale_spin.value) + step_delta
 	target_scale = clampf(target_scale, float(scale_spin.min_value), float(scale_spin.max_value))
@@ -1280,11 +1300,17 @@ func _on_light_color_changed(value: float) -> void:
 		shader_option.set_light_color(color)
 
 
+# Description: Passes the current model to the shader selector for outline management.
+# Args: model (Node) - current render model or null
+# Returns: void
 func _set_shader_model(model: Node) -> void:
 	if shader_option != null and shader_option.has_method("set_model"):
 		shader_option.set_model(model)
 
 
+# Description: Refreshes shader overlay sizing and reapplies the selected shader.
+# Args: none
+# Returns: void
 func _refresh_shader_render_size() -> void:
 	if shader_option == null:
 		return

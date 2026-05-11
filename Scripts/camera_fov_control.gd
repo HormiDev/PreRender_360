@@ -9,6 +9,9 @@ extends Control
 @onready var _spinbox: SpinBox = $CameraFovSpinBox
 
 
+# Description: Initializes FOV controls, syncs their values and connects change signals.
+# Args: none
+# Returns: void
 func _ready() -> void:
 	_slider.min_value = min_fov
 	_slider.max_value = max_fov
@@ -26,6 +29,9 @@ func _ready() -> void:
 		_spinbox.value_changed.connect(_on_fov_changed)
 
 
+# Description: Draws the camera field-of-view preview cone and angle arc.
+# Args: none
+# Returns: void
 func _draw() -> void:
 	if _slider == null:
 		return
@@ -47,6 +53,9 @@ func _draw() -> void:
 	_draw_fov_arc(lens_origin, half_angle)
 
 
+# Description: Calculates where a preview ray exits the drawing bounds.
+# Args: origin (Vector2) - ray origin, angle (float) - ray angle in radians, bounds (Rect2) - preview bounds
+# Returns: Vector2 - end point on the preview bounds
 func _get_ray_end(origin: Vector2, angle: float, bounds: Rect2) -> Vector2:
 	var direction := Vector2(cos(angle), sin(angle))
 	var max_distance := INF
@@ -61,6 +70,9 @@ func _get_ray_end(origin: Vector2, angle: float, bounds: Rect2) -> Vector2:
 	return origin + direction * max_distance
 
 
+# Description: Draws the curved FOV angle marker in the preview.
+# Args: origin (Vector2) - arc center, half_angle (float) - half of the FOV angle in radians
+# Returns: void
 func _draw_fov_arc(origin: Vector2, half_angle: float) -> void:
 	var points := PackedVector2Array()
 	var radius := 18.0
@@ -72,6 +84,9 @@ func _draw_fov_arc(origin: Vector2, half_angle: float) -> void:
 	draw_polyline(points, Color(0.38, 0.78, 1.0, 0.65), 1.25)
 
 
+# Description: Reads the first configured camera FOV or returns a fallback value.
+# Args: fallback (float) - value to use when no camera is found
+# Returns: float - camera FOV in degrees
 func _get_first_camera_fov(fallback: float) -> float:
 	for camera_path in camera_paths:
 		var camera := get_node_or_null(camera_path) as Camera3D
@@ -81,6 +96,9 @@ func _get_first_camera_fov(fallback: float) -> float:
 	return fallback
 
 
+# Description: Handles slider or spinbox FOV changes and synchronizes all targets.
+# Args: value (float) - requested FOV in degrees
+# Returns: void
 func _on_fov_changed(value: float) -> void:
 	var fov := clampf(value, min_fov, max_fov)
 	_slider.set_value_no_signal(fov)
@@ -89,6 +107,9 @@ func _on_fov_changed(value: float) -> void:
 	queue_redraw()
 
 
+# Description: Applies the clamped FOV value to all configured cameras.
+# Args: value (float) - requested FOV in degrees
+# Returns: void
 func _apply_fov(value: float) -> void:
 	var fov := clampf(value, min_fov, max_fov)
 	for camera_path in camera_paths:

@@ -212,12 +212,21 @@ func _sync_rotation_degrees_from_basis() -> void:
 	yaw_degrees = selected.y
 	roll_degrees = selected.z
 
+# Description: Wraps an angle to the -180 to 180 degree range.
+# Args: value (float) - angle in degrees
+# Returns: float - wrapped angle in degrees
 func _wrap_degrees(value: float) -> float:
 	return wrapf(value, -180.0, 180.0)
 
+# Description: Calculates the shortest signed delta between two angles.
+# Args: from_value (float) - starting angle in degrees, to_value (float) - target angle in degrees
+# Returns: float - shortest angular difference in degrees
 func _angle_delta_degrees(from_value: float, to_value: float) -> float:
 	return wrapf(to_value - from_value, -180.0, 180.0)
 
+# Description: Calculates squared angular distance between two Euler degree vectors.
+# Args: a (Vector3) - first rotation in degrees, b (Vector3) - second rotation in degrees
+# Returns: float - squared shortest-angle distance
 func _rotation_degrees_distance(a: Vector3, b: Vector3) -> float:
 	var dx: float = _angle_delta_degrees(a.x, b.x)
 	var dy: float = _angle_delta_degrees(a.y, b.y)

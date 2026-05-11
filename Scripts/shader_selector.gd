@@ -37,6 +37,9 @@ var _outline_nodes: Array[MeshInstance3D] = []
 var _light_color := Color(1.0, 1.0, 1.0, 1.0)
 
 
+# Description: Initializes node references, shader materials and option entries.
+# Args: none
+# Returns: void
 func _ready() -> void:
 	_resolve_nodes()
 	_create_post_process_materials()
@@ -94,6 +97,9 @@ func apply_selected_shader() -> void:
 		_preview_post_process_overlay.visible = use_post_process
 
 
+# Description: Resolves exported node paths used by render and preview overlays.
+# Args: none
+# Returns: void
 func _resolve_nodes() -> void:
 	if render_viewport_path != NodePath():
 		_render_viewport = get_node_or_null(render_viewport_path) as SubViewport
@@ -103,6 +109,9 @@ func _resolve_nodes() -> void:
 		_preview_post_process_overlay = get_node_or_null(preview_post_process_overlay_path) as ColorRect
 
 
+# Description: Fills the shader option button with all available post-process modes.
+# Args: none
+# Returns: void
 func _populate_shader_options() -> void:
 	clear()
 	add_item("None", int(PostProcessShader.NONE))
@@ -117,10 +126,16 @@ func _populate_shader_options() -> void:
 	select(int(PostProcessShader.NONE))
 
 
+# Description: Applies the newly selected shader option.
+# Args: _index (int) - selected item index, unused because selected id is read directly
+# Returns: void
 func _on_shader_selected(_index: int) -> void:
 	apply_selected_shader()
 
 
+# Description: Creates and stores ShaderMaterial instances for each post-process shader.
+# Args: none
+# Returns: void
 func _create_post_process_materials() -> void:
 	_create_outline_material()
 
@@ -158,6 +173,9 @@ func _create_post_process_materials() -> void:
 	_post_process_materials[int(PostProcessShader.COLORED_PENCIL)] = colored_pencil_material
 
 
+# Description: Creates the shared outline material used by outline-based shader modes.
+# Args: none
+# Returns: void
 func _create_outline_material() -> void:
 	if _outline_material != null:
 		return
@@ -166,6 +184,9 @@ func _create_outline_material() -> void:
 	_outline_material.shader = ANIMATION_OUTLINE_SHADER
 
 
+# Description: Rebuilds generated outline meshes for the current model.
+# Args: none
+# Returns: void
 func _rebuild_outlines() -> void:
 	_clear_outlines()
 	_create_outline_material()
@@ -176,6 +197,9 @@ func _rebuild_outlines() -> void:
 	_set_outlines_enabled(_shader_uses_outline(get_selected_id()))
 
 
+# Description: Recursively adds hidden outline mesh children for each mesh in the model.
+# Args: node (Node) - node to inspect and recurse through
+# Returns: void
 func _add_outlines_recursive(node: Node) -> void:
 	if node.name == ANIMATION_OUTLINE_NODE_NAME:
 		return
@@ -197,6 +221,9 @@ func _add_outlines_recursive(node: Node) -> void:
 		_add_outlines_recursive(child)
 
 
+# Description: Removes all generated outline mesh nodes.
+# Args: none
+# Returns: void
 func _clear_outlines() -> void:
 	for outline in _outline_nodes:
 		if outline != null and is_instance_valid(outline):
@@ -204,12 +231,18 @@ func _clear_outlines() -> void:
 	_outline_nodes.clear()
 
 
+# Description: Shows or hides all generated outline mesh nodes.
+# Args: enabled (bool) - whether outlines should be visible
+# Returns: void
 func _set_outlines_enabled(enabled: bool) -> void:
 	for outline in _outline_nodes:
 		if outline != null and is_instance_valid(outline):
 			outline.visible = enabled
 
 
+# Description: Checks whether a shader option requires generated outline meshes.
+# Args: shader_id (int) - selected post-process shader id
+# Returns: bool - true when the shader uses outlines, false otherwise
 func _shader_uses_outline(shader_id: int) -> bool:
 	return (
 		shader_id == int(PostProcessShader.ANIMATION)
@@ -217,6 +250,9 @@ func _shader_uses_outline(shader_id: int) -> bool:
 	)
 
 
+# Description: Resizes the render post-process overlay to match the render viewport.
+# Args: none
+# Returns: void
 func _update_render_overlay_size() -> void:
 	if _render_post_process_overlay == null or _render_viewport == null:
 		return
