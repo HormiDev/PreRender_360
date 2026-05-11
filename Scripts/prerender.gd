@@ -30,12 +30,9 @@ const ATLAS_MAX_PIXELS := 268435456
 @onready var directional_light: DirectionalLight3D = $SubViewport/DirectionalLight3D
 @onready var model_rotation_control = $Control/ModelRotationSphere
 @onready var light_rotation_control = $Control/LightRotationSphere
-@onready var light_intensity_slider: HSlider = $Control/LightIntensitySlider
 @onready var import_button: Button = $Control/ImportButton
 @onready var file_dialog: FileDialog = $Control/FileDialog
-@onready var light_r_slider: HSlider = $Control/LightRSlider
-@onready var light_g_slider: HSlider = $Control/LightGSlider
-@onready var light_b_slider: HSlider = $Control/LightBSlider
+@onready var light_color_picker: ColorPickerButton = $Control/LightColorPickerButton
 @onready var render_pos_x_spin: SpinBox = $Control.get_node_or_null("RenderPosXSpin")
 @onready var render_pos_y_spin: SpinBox = $Control.get_node_or_null("RenderPosYSpin")
 @onready var render_pos_z_spin: SpinBox = $Control.get_node_or_null("RenderPosZSpin")
@@ -131,9 +128,6 @@ func _ready():
 		if model_mouse_drag.has_signal("rotation_delta_requested"):
 			model_mouse_drag.rotation_delta_requested.connect(_on_model_rotation_delta)
 
-	# Intensidad de la luz
-	light_intensity_slider.value_changed.connect(_on_light_intensity_changed)
-	
 	# Cargar modelo por defecto
 	if default_model != null:
 		var scene: Node3D = default_model.instantiate() as Node3D
@@ -152,12 +146,12 @@ func _ready():
 			model_mouse_drag.set_pick_root(scene)
 		_update_nframes_ui()
 	
-		# Color RGB de la luz
-	light_r_slider.value_changed.connect(_on_light_color_changed)
-	light_g_slider.value_changed.connect(_on_light_color_changed)
-	light_b_slider.value_changed.connect(_on_light_color_changed)
+	# Color de la luz
+	light_color_picker.color_changed.connect(_on_light_color_changed)
+	light_color_picker.picker_created.connect(_configure_light_color_picker_popup)
+	_configure_light_color_picker_popup()
 	# Aplicar color inicial
-	_on_light_color_changed(0)
+	_on_light_color_changed(light_color_picker.color)
 
 	# Enable _process to keep UI in sync with model (idle animations, external changes)
 	set_process(true)
@@ -1281,23 +1275,34 @@ func _on_scale_step_requested(step_delta: float) -> void:
 	target_scale = clampf(target_scale, float(scale_spin.min_value), float(scale_spin.max_value))
 	scale_spin.value = target_scale
 
-# Description: Adjusts directional light intensity.
-# Args: value (float) — new intensity
+# Description: Updates directional light color based on the color picker.
+# Args: color (Color) — selected light color
 # Returns: void
-func _on_light_intensity_changed(value: float) -> void:
-	directional_light.light_energy = value
-
-# Description: Updates directional light color based on RGB sliders.
-# Args: value (float) — slider value (not directly used)
-# Returns: void
-func _on_light_color_changed(value: float) -> void:
-	var r: float = float(light_r_slider.value) / 255.0
-	var g: float = float(light_g_slider.value) / 255.0
-	var b: float = float(light_b_slider.value) / 255.0
-	var color := Color(r, g, b, 1.0)
-	directional_light.light_color = color
+func _on_light_color_changed(color: Color) -> void:
+	var light_color := Color(color.r, color.g, color.b, 1.0)
+	directional_light.light_color = light_color
 	if shader_option != null and shader_option.has_method("set_light_color"):
-		shader_option.set_light_color(color)
+		shader_option.set_light_color(light_color)
+
+
+# Description: Keeps the light color picker popup above the rest of the UI.
+# Args: none
+# Returns: void
+func _configure_light_color_picker_popup() -> void:
+	var popup := light_color_picker.get_popup()
+	if popup == null:
+		return
+
+	popup.always_on_top = true
+	popup.transparent = false
+	popup.transparent_bg = false
+
+	var opaque_panel := StyleBoxFlat.new()
+	opaque_panel.bg_color = Color(0.12, 0.12, 0.12, 1.0)
+	opaque_panel.border_color = Color(0.38, 0.38, 0.38, 1.0)
+	opaque_panel.set_border_width_all(1)
+	opaque_panel.set_corner_radius_all(4)
+	popup.add_theme_stylebox_override("panel", opaque_panel)
 
 
 # Description: Passes the current model to the shader selector for outline management.

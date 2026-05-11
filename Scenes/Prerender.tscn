@@ -328,17 +328,17 @@ script = ExtResource("7_reset_spin")
 [node name="CameraFov_text" type="Label" parent="Control" unique_id=1876543201]
 layout_mode = 0
 offset_left = 1627.0
-offset_top = 403.0
+offset_top = 307.0
 offset_right = 1780.0
-offset_bottom = 431.0
+offset_bottom = 335.0
 text = "Camera FOV"
 
 [node name="CameraFovControl" parent="Control" unique_id=1876543203 instance=ExtResource("8_fov_control")]
 layout_mode = 0
 offset_left = 1627.0
-offset_top = 433.0
+offset_top = 337.0
 offset_right = 1987.0
-offset_bottom = 503.0
+offset_bottom = 407.0
 camera_paths = Array[NodePath]([NodePath("../../Camera3D"), NodePath("../../SubViewport/RenderCamera3D")])
 
 [node name="LigthRotaton_text" type="Label" parent="Control" unique_id=1121088066]
@@ -387,63 +387,23 @@ offset_bottom = 364.0
 grow_horizontal = 1
 grow_vertical = 1
 
-[node name="Ligthintensity_text" type="Label" parent="Control" unique_id=1644557535]
-layout_mode = 0
-offset_left = 1693.0
-offset_top = 230.0
-offset_right = 1874.0
-offset_bottom = 258.0
-text = "Ligth Intensity"
-horizontal_alignment = 1
-
-[node name="LightIntensitySlider" type="HSlider" parent="Control" unique_id=380163041]
-layout_mode = 0
-offset_left = 1681.0
-offset_top = 261.0
-offset_right = 1886.0
-offset_bottom = 277.0
-max_value = 10.0
-step = 0.01
-value = 1.0
-
 [node name="LigthColor_text" type="Label" parent="Control" unique_id=980438068]
 layout_mode = 0
-offset_left = 1691.0
-offset_top = 286.0
-offset_right = 1873.0
-offset_bottom = 314.0
+offset_left = 1629.0
+offset_top = 264.0
+offset_right = 1811.0
+offset_bottom = 292.0
 text = "Ligth Color"
-horizontal_alignment = 1
 
-[node name="LightRSlider" type="HSlider" parent="Control" unique_id=1151172999]
-modulate = Color(1, 0, 0, 1)
+[node name="LightColorPickerButton" type="ColorPickerButton" parent="Control" unique_id=1151172999]
+z_index = 100
 layout_mode = 0
-offset_left = 1681.0
-offset_top = 317.0
-offset_right = 1886.0
-offset_bottom = 333.0
-max_value = 255.0
-value = 255.0
-
-[node name="LightGSlider" type="HSlider" parent="Control" unique_id=1176831856]
-modulate = Color(0, 1, 0, 1)
-layout_mode = 0
-offset_left = 1681.0
-offset_top = 337.0
-offset_right = 1886.0
-offset_bottom = 353.0
-max_value = 255.0
-value = 255.0
-
-[node name="LightBSlider" type="HSlider" parent="Control" unique_id=1744312273]
-modulate = Color(0, 0, 1, 1)
-layout_mode = 0
-offset_left = 1681.0
-offset_top = 357.0
-offset_right = 1886.0
-offset_bottom = 373.0
-max_value = 255.0
-value = 255.0
+offset_left = 1823.0
+offset_top = 261.0
+offset_right = 1870.0
+offset_bottom = 293.0
+color = Color(1, 1, 1, 1)
+edit_alpha = false
 
 [node name="FilePrefixInput" type="LineEdit" parent="Control" unique_id=641045947]
 layout_mode = 0
@@ -553,5 +513,13 @@ theme_override_font_sizes/font_size = 24
 text = "Rendering..."
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="Version_text" type="Label" parent="Control" unique_id=1720709526]
+layout_mode = 0
+offset_left = 93.0
+offset_top = 1047.0
+offset_right = 133.0
+offset_bottom = 1070.0
+text = "V 1.5"
 
 [connection signal="pressed" from="Control/Button" to="." method="_on_button_pressed"]
