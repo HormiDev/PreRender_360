@@ -1,5 +1,7 @@
 extends Node3D
 
+const GIFExporter = preload("res://Scripts/gif_exporter.gd")
+
 # ---------- CONFIGURACIÓN ----------
 @export var capture_directory := "./capture"
 @export var default_model: PackedScene
@@ -9,6 +11,7 @@ enum ImageFormat {
 	PNG,
 	JPG,
 	WEBP,
+	GIF,
 	XPM,
 	XPM_ARGB
 }
@@ -39,6 +42,8 @@ const ATLAS_MAX_PIXELS := 268435456
 @onready var model_mouse_drag = $ModelMouseDrag
 @onready var n_frames_spin: SpinBox = $Control.get_node_or_null("NFrames")
 @onready var atlas_mode_check: CheckBox = $Control.get_node_or_null("AtlasModeCheck")
+@onready var gif_fps_label: Label = $Control.get_node_or_null("GifFps_text")
+@onready var gif_fps_spin: SpinBox = $Control.get_node_or_null("GifFpsSpin")
 @onready var atlas_error_dialog: AcceptDialog = $Control.get_node_or_null("AtlasErrorDialog")
 @onready var language_selector = $Control/LanguageSelector
 @onready var rendering_panel: Panel = $Control.get_node_or_null("RenderingPanel")
@@ -87,9 +92,15 @@ func _ready():
 	format_option.add_item("PNG", int(ImageFormat.PNG))
 	format_option.add_item("JPG", int(ImageFormat.JPG))
 	format_option.add_item("WEBP", int(ImageFormat.WEBP))
+	format_option.add_item("GIF", int(ImageFormat.GIF))
 	format_option.add_item("XPM", int(ImageFormat.XPM))
 	format_option.add_item("XPM_ARGB", int(ImageFormat.XPM_ARGB))
 	format_option.select(int(ImageFormat.PNG))
+	if not format_option.item_selected.is_connected(_on_image_format_selected):
+		format_option.item_selected.connect(_on_image_format_selected)
+	if gif_fps_spin != null:
+		gif_fps_spin.value = anim_fps
+	_update_export_format_controls()
 
 	if language_selector != null:
 		language_selector.set_language(language_selector.get_current_language())
@@ -169,6 +180,8 @@ func _on_button_pressed():
 	render_height = int(height_spin.value)
 	capture_count = int(captures_spin.value)
 	image_format = format_option.get_selected_id()
+	if gif_fps_spin != null:
+		anim_fps = int(gif_fps_spin.value)
 	
 	if file_prefix_input and file_prefix_input.text.strip_edges() != "":
 		file_prefix = file_prefix_input.text.strip_edges()
@@ -186,10 +199,35 @@ func _on_button_pressed():
 	_hide_rendering_message()
 
 
+# Description: Updates format-specific UI when the image format changes.
+# Args: _index (int) - selected item index, unused
+# Returns: void
+func _on_image_format_selected(_index: int) -> void:
+	image_format = format_option.get_selected_id()
+	_update_export_format_controls()
+
+
+# Description: Swaps atlas controls for GIF controls when GIF export is selected.
+# Args: none
+# Returns: void
+func _update_export_format_controls() -> void:
+	var is_gif := image_format == ImageFormat.GIF
+
+	if atlas_mode_check != null:
+		atlas_mode_check.visible = not is_gif
+	if gif_fps_label != null:
+		gif_fps_label.visible = is_gif
+	if gif_fps_spin != null:
+		gif_fps_spin.visible = is_gif
+
+
 # Description: Validates that atlas mode does not exceed pixel limit.
 # Args: none
 # Returns: bool — true if atlas is valid or disabled, false if disabled due to size.
 func _validate_atlas_mode_limits() -> bool:
+	if image_format == ImageFormat.GIF:
+		return true
+
 	if atlas_mode_check == null or not atlas_mode_check.button_pressed:
 		return true
 
@@ -320,13 +358,16 @@ func _find_animation_player(node: Node) -> AnimationPlayer:
 func capture_360() -> void:
 	ensure_capture_folder()
 	clear_capture_folder()
+	if OS.has_feature("web"):
+		_web_capture_buffers.clear()
 
 	render_scene.rotation = Vector3.ZERO
 	var step_degrees := 360.0 / capture_count
 
 	var anim_player := _find_animation_player(current_model) if current_model else null
 	var has_anim := anim_player != null and anim_player.get_animation_list().size() > 0
-	var atlas_mode := atlas_mode_check != null and atlas_mode_check.button_pressed
+	var gif_mode := image_format == ImageFormat.GIF
+	var atlas_mode := atlas_mode_check != null and atlas_mode_check.button_pressed and not gif_mode
 	var total_frames := 1
 	var capture_anim_name := ""
 	if has_anim:
@@ -337,6 +378,9 @@ func capture_360() -> void:
 	var atlas_image: Image = null
 	if atlas_mode:
 		atlas_image = Image.create(render_width * total_frames, render_height * capture_count, false, Image.FORMAT_RGBA8)
+
+	var gif_exporter = GIFExporter.new(render_width, render_height) if gif_mode else null
+	var gif_frame_delay := 1.0 / maxf(1.0, float(anim_fps))
 
 	if has_anim:
 		var anim_name: String = anim_player.get_animation_list()[0]
@@ -363,7 +407,9 @@ func capture_360() -> void:
 				await get_tree().process_frame
 
 				var image: Image = viewport.get_texture().get_image()
-				if atlas_mode:
+				if gif_mode:
+					_add_gif_frame(gif_exporter, image, gif_frame_delay)
+				elif atlas_mode:
 					atlas_image.blit_rect(image, Rect2i(0, 0, render_width, render_height), Vector2i(f * render_width, i * render_height))
 				else:
 					var image_to_save := _prepare_image_for_format(image)
@@ -384,7 +430,9 @@ func capture_360() -> void:
 			await get_tree().process_frame
 
 			var image: Image = viewport.get_texture().get_image()
-			if atlas_mode:
+			if gif_mode:
+				_add_gif_frame(gif_exporter, image, gif_frame_delay)
+			elif atlas_mode:
 				atlas_image.blit_rect(image, Rect2i(0, 0, render_width, render_height), Vector2i(0, i * render_height))
 			else:
 				var image_to_save := _prepare_image_for_format(image)
@@ -400,12 +448,14 @@ func capture_360() -> void:
 		var atlas_to_save := _prepare_image_for_format(atlas_image)
 		var atlas_base_path := "%s/%satlas" % [capture_directory, file_prefix]
 		save_image(atlas_to_save, atlas_base_path)
+	elif gif_mode and gif_exporter != null:
+		_save_gif_export(gif_exporter)
 
 	print("360° capture completed.")
 	print("Saved to:", ProjectSettings.globalize_path(capture_directory))
 
 	# Si estamos en web, empaquetar y descargar un ZIP con todas las capturas
-	if OS.has_feature("web") and not atlas_mode and _web_capture_buffers.size() > 0:
+	if OS.has_feature("web") and not atlas_mode and not gif_mode and _web_capture_buffers.size() > 0:
 		var zip_name := file_prefix + ".zip"
 		var zip_data := build_zip_from_files(_web_capture_buffers)
 		JavaScriptBridge.download_buffer(zip_data, zip_name, "application/zip")
@@ -431,6 +481,53 @@ func _restore_capture_start_state(anim_player: AnimationPlayer, anim_name: Strin
 	anim_player.seek(0.0, true)
 	anim_player.advance(0.0)
 
+
+# Description: Adds a rendered image to the animated GIF exporter.
+# Args: gif_exporter (RefCounted) - active GIF exporter, image (Image) - frame image, frame_delay (float) - seconds per frame
+# Returns: void
+func _add_gif_frame(gif_exporter, image: Image, frame_delay: float) -> void:
+	if gif_exporter == null:
+		return
+
+	var err: int = gif_exporter.add_frame(image, frame_delay)
+	if err != OK:
+		push_error("Could not add frame to GIF export: %s" % str(err))
+
+
+# Description: Saves the animated GIF to disk or downloads it on web.
+# Args: gif_exporter (RefCounted) - populated GIF exporter
+# Returns: void
+func _save_gif_export(gif_exporter) -> void:
+	var gif_data: PackedByteArray = gif_exporter.export_file_data()
+	var file_name := _get_gif_output_name()
+
+	if OS.has_feature("web"):
+		JavaScriptBridge.download_buffer(gif_data, file_name + ".gif", "image/gif")
+		return
+
+	var path := "%s/%s.gif" % [capture_directory, file_name]
+	var file := FileAccess.open(path, FileAccess.WRITE)
+	if file == null:
+		push_error("Could not write GIF to: " + ProjectSettings.globalize_path(path))
+		return
+
+	file.store_buffer(gif_data)
+	file.close()
+
+
+# Description: Builds a clean file name for single-file GIF exports.
+# Args: none
+# Returns: String - file name without extension
+func _get_gif_output_name() -> String:
+	var output_name := file_prefix.strip_edges()
+	while output_name.ends_with("_") or output_name.ends_with("-") or output_name.ends_with(" "):
+		output_name = output_name.substr(0, output_name.length() - 1)
+
+	if output_name == "":
+		output_name = "capture"
+
+	return output_name + "_animation"
+
 # ---------- GUARDAR ----------
 # Description: Saves an image to disk or downloads on web based on selected format.
 # Args: image (Image) — image to save
@@ -446,6 +543,8 @@ func save_image(image: Image, base_path: String):
 				JavaScriptBridge.download_buffer(image.save_jpg_to_buffer(0.95), file_name + ".jpg")
 			ImageFormat.WEBP:
 				JavaScriptBridge.download_buffer(image.save_webp_to_buffer(), file_name + ".webp")
+			ImageFormat.GIF:
+				JavaScriptBridge.download_buffer(_build_single_frame_gif(image), file_name + ".gif", "image/gif")
 			ImageFormat.XPM:
 				JavaScriptBridge.download_buffer(build_xpm_rgba_text(image).to_utf8_buffer(), file_name + ".xpm")
 			ImageFormat.XPM_ARGB:
@@ -459,6 +558,11 @@ func save_image(image: Image, base_path: String):
 			image.save_jpg(base_path + ".jpg", 0.95)
 		ImageFormat.WEBP:
 			image.save_webp(base_path + ".webp")
+		ImageFormat.GIF:
+			var file := FileAccess.open(base_path + ".gif", FileAccess.WRITE)
+			if file != null:
+				file.store_buffer(_build_single_frame_gif(image))
+				file.close()
 		ImageFormat.XPM:
 			save_xpm_rgba(image, base_path + ".xpm")
 		ImageFormat.XPM_ARGB:
@@ -486,6 +590,8 @@ func save_image_web_buffer(image: Image, _name_without_ext: String) -> PackedByt
 		return image.save_jpg_to_buffer(0.95)
 	elif image_format == ImageFormat.WEBP:
 		return image.save_webp_to_buffer()
+	elif image_format == ImageFormat.GIF:
+		return _build_single_frame_gif(image)
 	elif image_format == ImageFormat.XPM:
 		return build_xpm_rgba_text(image).to_utf8_buffer()
 	elif image_format == ImageFormat.XPM_ARGB:
@@ -568,6 +674,8 @@ func build_zip_from_files(files: Array) -> PackedByteArray:
 			ext = ".jpg"
 		elif image_format == ImageFormat.WEBP:
 			ext = ".webp"
+		elif image_format == ImageFormat.GIF:
+			ext = ".gif"
 		elif image_format == ImageFormat.XPM or image_format == ImageFormat.XPM_ARGB:
 			ext = ".xpm"
 		var name_full: String = filename + ext
@@ -631,6 +739,15 @@ func build_zip_from_files(files: Array) -> PackedByteArray:
 	_append_pba(out, _u16_le(0))
 
 	return out
+
+
+# Description: Encodes one image as a GIF, used by generic save helpers.
+# Args: image (Image) - image to encode
+# Returns: PackedByteArray - GIF file bytes
+func _build_single_frame_gif(image: Image) -> PackedByteArray:
+	var exporter = GIFExporter.new(image.get_width(), image.get_height())
+	exporter.add_frame(image, 1.0 / maxf(1.0, float(anim_fps)))
+	return exporter.export_file_data()
 
 
 # Description: Generates XPM (RGBA) text from an `Image`.

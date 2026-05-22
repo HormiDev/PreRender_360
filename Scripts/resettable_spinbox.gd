@@ -5,7 +5,7 @@ extends SpinBox
 @export var reset_button_tooltip_key := "reset_button_tooltip"
 @export var reset_button_gap := 4.0
 @export var reset_button_width := 22.0
-@export var reset_button_tolerance: float = 0.05
+@export var reset_button_tolerance: float = 0.0001
 
 var _original_value: float = 0.0
 var _last_observed_value: float = 0.0

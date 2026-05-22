@@ -100,9 +100,9 @@ anchors_preset = -1
 anchor_left = 0.84010416
 anchor_right = 0.84010416
 offset_left = 27.0
-offset_top = 800.0
+offset_top = 791.0
 offset_right = 137.0
-offset_bottom = 828.0
+offset_bottom = 819.0
 text = "Render Width"
 metadata/_edit_use_anchors_ = true
 
@@ -112,9 +112,9 @@ anchors_preset = -1
 anchor_left = 0.858333
 anchor_right = 0.858333
 offset_left = 147.0
-offset_top = 798.0
-offset_right = 233.563
-offset_bottom = 829.0
+offset_top = 789.0
+offset_right = 233.56299
+offset_bottom = 820.0
 max_value = 10000.0
 value = 512.0
 script = ExtResource("7_reset_spin")
@@ -126,9 +126,9 @@ anchors_preset = -1
 anchor_left = 0.84010416
 anchor_right = 0.84010416
 offset_left = 27.0
-offset_top = 838.0
+offset_top = 829.0
 offset_right = 138.0
-offset_bottom = 866.0
+offset_bottom = 857.0
 text = "Render Heigth"
 metadata/_edit_use_anchors_ = true
 
@@ -138,9 +138,9 @@ anchors_preset = -1
 anchor_left = 0.858333
 anchor_right = 0.858333
 offset_left = 147.0
-offset_top = 836.0
-offset_right = 233.563
-offset_bottom = 867.0
+offset_top = 827.0
+offset_right = 233.56299
+offset_bottom = 858.0
 max_value = 10000.0
 value = 512.0
 script = ExtResource("7_reset_spin")
@@ -153,10 +153,10 @@ anchor_left = 0.7253651
 anchor_top = -0.775
 anchor_right = 0.7253652
 anchor_bottom = -0.775
-offset_left = 248.3
-offset_top = 1756.0
-offset_right = 359.3
-offset_bottom = 1784.0
+offset_left = 248.30005
+offset_top = 1747.0
+offset_right = 359.30005
+offset_bottom = 1775.0
 text = "N Frames"
 metadata/_edit_use_anchors_ = true
 
@@ -167,10 +167,10 @@ anchor_left = 0.743594
 anchor_top = -0.775
 anchor_right = 0.743594
 anchor_bottom = -0.775
-offset_left = 368.3
-offset_top = 1754.0
-offset_right = 454.863
-offset_bottom = 1785.0
+offset_left = 368.30005
+offset_top = 1745.0
+offset_right = 454.86304
+offset_bottom = 1776.0
 min_value = 1.0
 max_value = 999.0
 value = 1.0
@@ -183,9 +183,9 @@ anchors_preset = -1
 anchor_left = 0.84010416
 anchor_right = 0.84010416
 offset_left = 27.0
-offset_top = 879.0
+offset_top = 870.0
 offset_right = 138.0
-offset_bottom = 907.0
+offset_bottom = 898.0
 text = "N Views"
 metadata/_edit_use_anchors_ = true
 
@@ -195,9 +195,9 @@ anchors_preset = -1
 anchor_left = 0.858333
 anchor_right = 0.858333
 offset_left = 147.0
-offset_top = 877.0
-offset_right = 233.563
-offset_bottom = 908.0
+offset_top = 868.0
+offset_right = 233.56299
+offset_bottom = 899.0
 max_value = 3600.0
 value = 36.0
 script = ExtResource("7_reset_spin")
@@ -209,9 +209,9 @@ anchors_preset = -1
 anchor_left = 0.84010416
 anchor_right = 0.84010416
 offset_left = 28.0
-offset_top = 964.0
+offset_top = 955.0
 offset_right = 139.0
-offset_bottom = 992.0
+offset_bottom = 983.0
 text = "Format image"
 metadata/_edit_use_anchors_ = true
 
@@ -221,9 +221,9 @@ anchors_preset = -1
 anchor_left = 0.858333
 anchor_right = 0.858333
 offset_left = 151.0
-offset_top = 964.0
+offset_top = 955.0
 offset_right = 215.0
-offset_bottom = 996.0
+offset_bottom = 987.0
 metadata/_edit_use_anchors_ = true
 
 [node name="AtlasModeCheck" type="CheckBox" parent="Control" unique_id=376638723]
@@ -236,6 +236,33 @@ offset_top = 998.0
 offset_right = 227.0
 offset_bottom = 1029.0
 text = "Atlas mode"
+metadata/_edit_use_anchors_ = true
+
+[node name="GifFps_text" type="Label" parent="Control" unique_id=2061933425]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.840625
+anchor_right = 0.840625
+offset_left = 27.0
+offset_top = 1002.0
+offset_right = 87.0
+offset_bottom = 1029.0
+text = "GIF FPS"
+metadata/_edit_use_anchors_ = true
+
+[node name="GifFpsSpin" type="SpinBox" parent="Control" unique_id=87791600]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.88854164
+anchor_right = 0.9028646
+offset_left = 91.0
+offset_top = 998.0
+offset_right = 150.0
+offset_bottom = 1029.0
+min_value = 1.0
+max_value = 120.0
+value = 30.0
+script = ExtResource("7_reset_spin")
 metadata/_edit_use_anchors_ = true
 
 [node name="Shader_text" type="Label" parent="Control" unique_id=1440615921]
@@ -408,9 +435,9 @@ edit_alpha = false
 [node name="FilePrefixInput" type="LineEdit" parent="Control" unique_id=641045947]
 layout_mode = 0
 offset_left = 1650.0
-offset_top = 750.0
+offset_top = 741.0
 offset_right = 1874.0
-offset_bottom = 781.0
+offset_bottom = 772.0
 placeholder_text = "Save Name"
 
 [node name="XPosition_text" type="Label" parent="Control" unique_id=1244129325]
@@ -520,6 +547,6 @@ offset_left = 93.0
 offset_top = 1047.0
 offset_right = 133.0
 offset_bottom = 1070.0
-text = "V 1.5"
+text = "V 1.6"
 
 [connection signal="pressed" from="Control/Button" to="." method="_on_button_pressed"]

@@ -36,6 +36,7 @@ const UI_TEXTS := {
 		"shader_neon": "Neon",
 		"shader_light_color_highlights": "Light Color Highlights",
 		"atlas_mode": "Atlas mode",
+		"gif_fps": "GIF FPS",
 		"import_button": "Import model .glb",
 		"file_dialog_title": "Open a File",
 		"file_dialog_ok": "Open",
@@ -75,6 +76,7 @@ const UI_TEXTS := {
 		"shader_neon": "Neón",
 		"shader_light_color_highlights": "Color de luz en brillos",
 		"atlas_mode": "Modo atlas",
+		"gif_fps": "FPS GIF",
 		"import_button": "Importar modelo .glb",
 		"file_dialog_title": "Abrir un archivo",
 		"file_dialog_ok": "Abrir",
@@ -621,6 +623,7 @@ func _apply_language(language_code: String) -> void:
 	_set_text("ImageFormat_text", "text", texts["image_format"])
 	_set_text("Shader_text", "text", get_text("post_shader"))
 	_set_text("AtlasModeCheck", "text", texts["atlas_mode"])
+	_set_text("GifFps_text", "text", get_text("gif_fps"))
 	_set_text("ImportButton", "text", texts["import_button"])
 	_set_text("AtlasErrorDialog", "title", texts["atlas_error_title"])
 	_set_text("Scale", "text", texts["scale_model"])
@@ -651,14 +654,15 @@ func _apply_language(language_code: String) -> void:
 # Args: none
 # Returns: void
 func _translate_format_options() -> void:
-	if _format_option == null or _format_option.item_count < 5:
+	if _format_option == null or _format_option.item_count < 6:
 		return
 
 	_format_option.set_item_text(0, "PNG")
 	_format_option.set_item_text(1, "JPG")
 	_format_option.set_item_text(2, "WEBP")
-	_format_option.set_item_text(3, "XPM")
-	_format_option.set_item_text(4, "XPM_ARGB")
+	_format_option.set_item_text(3, "GIF")
+	_format_option.set_item_text(4, "XPM")
+	_format_option.set_item_text(5, "XPM_ARGB")
 
 
 # Description: Updates post-process shader option labels.

@@ -60,11 +60,12 @@ I originally used it to simulate a 3D effect by creating animations from multipl
 
 ### Capture & Export
 - Automatic multi-angle rendering
-- Export as **sprite atlas** or **individual images**
+- Export as **sprite atlas**, **individual images**, or **animated GIF**
 - Available formats:
   - PNG
   - JPG
   - WEBP
+  - GIF
   - XPM
 - Automatic output folder saving
 
@@ -81,7 +82,7 @@ Less manual work, more consistent results.
 
 - Engine: Godot 4  
 - Input: GLB / GLTF  
-- Output: PNG, JPG, WEBP, XPM  
+- Output: PNG, JPG, WEBP, GIF, XPM
 
 ---
 
